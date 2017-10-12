@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autotest.dao.CaseMapper" >
+  <resultMap id="BaseResultMap" type="com.autotest.model.Case" >
+    <id column="caseid" property="caseid" jdbcType="INTEGER" />
+    <result column="casename" property="casename" jdbcType="VARCHAR" />
+    <result column="requestType" property="requesttype" jdbcType="VARCHAR" />
+    <result column="requestUrl" property="requesturl" jdbcType="VARCHAR" />
+    <result column="requestHeader" property="requestheader" jdbcType="VARCHAR" />
+    <result column="requestBody" property="requestbody" jdbcType="VARCHAR" />
+    <result column="requestOrder" property="requestorder" jdbcType="INTEGER" />
+    <result column="assertExp" property="assertexp" jdbcType="VARCHAR" />
+    <result column="moduleId" property="moduleid" jdbcType="INTEGER" />
+    <result column="_timestamp" property="timestamp" jdbcType="TIMESTAMP" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    caseid, casename, requestType, requestUrl, requestHeader, requestBody, requestOrder, 
+    assertExp, moduleId, _timestamp, updatetime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from qa_case
+    where caseid = #{caseid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from qa_case
+    where caseid = #{caseid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.autotest.model.Case" >
+    insert into qa_case (caseid, casename, requestType, 
+      requestUrl, requestHeader, requestBody, 
+      requestOrder, assertExp, moduleId, 
+      _timestamp, updatetime)
+    values (#{caseid,jdbcType=INTEGER}, #{casename,jdbcType=VARCHAR}, #{requesttype,jdbcType=VARCHAR}, 
+      #{requesturl,jdbcType=VARCHAR}, #{requestheader,jdbcType=VARCHAR}, #{requestbody,jdbcType=VARCHAR}, 
+      #{requestorder,jdbcType=INTEGER}, #{assertexp,jdbcType=VARCHAR}, #{moduleid,jdbcType=INTEGER}, 
+      #{timestamp,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.autotest.model.Case" >
+    insert into qa_case
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="caseid != null" >
+        caseid,
+      </if>
+      <if test="casename != null" >
+        casename,
+      </if>
+      <if test="requesttype != null" >
+        requestType,
+      </if>
+      <if test="requesturl != null" >
+        requestUrl,
+      </if>
+      <if test="requestheader != null" >
+        requestHeader,
+      </if>
+      <if test="requestbody != null" >
+        requestBody,
+      </if>
+      <if test="requestorder != null" >
+        requestOrder,
+      </if>
+      <if test="assertexp != null" >
+        assertExp,
+      </if>
+      <if test="moduleid != null" >
+        moduleId,
+      </if>
+      <if test="timestamp != null" >
+        _timestamp,
+      </if>
+      <if test="updatetime != null" >
+        updatetime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="caseid != null" >
+        #{caseid,jdbcType=INTEGER},
+      </if>
+      <if test="casename != null" >
+        #{casename,jdbcType=VARCHAR},
+      </if>
+      <if test="requesttype != null" >
+        #{requesttype,jdbcType=VARCHAR},
+      </if>
+      <if test="requesturl != null" >
+        #{requesturl,jdbcType=VARCHAR},
+      </if>
+      <if test="requestheader != null" >
+        #{requestheader,jdbcType=VARCHAR},
+      </if>
+      <if test="requestbody != null" >
+        #{requestbody,jdbcType=VARCHAR},
+      </if>
+      <if test="requestorder != null" >
+        #{requestorder,jdbcType=INTEGER},
+      </if>
+      <if test="assertexp != null" >
+        #{assertexp,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleid != null" >
+        #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="timestamp != null" >
+        #{timestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autotest.model.Case" >
+    update qa_case
+    <set >
+      <if test="casename != null" >
+        casename = #{casename,jdbcType=VARCHAR},
+      </if>
+      <if test="requesttype != null" >
+        requestType = #{requesttype,jdbcType=VARCHAR},
+      </if>
+      <if test="requesturl != null" >
+        requestUrl = #{requesturl,jdbcType=VARCHAR},
+      </if>
+      <if test="requestheader != null" >
+        requestHeader = #{requestheader,jdbcType=VARCHAR},
+      </if>
+      <if test="requestbody != null" >
+        requestBody = #{requestbody,jdbcType=VARCHAR},
+      </if>
+      <if test="requestorder != null" >
+        requestOrder = #{requestorder,jdbcType=INTEGER},
+      </if>
+      <if test="assertexp != null" >
+        assertExp = #{assertexp,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleid != null" >
+        moduleId = #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="timestamp != null" >
+        _timestamp = #{timestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where caseid = #{caseid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autotest.model.Case" >
+    update qa_case
+    set casename = #{casename,jdbcType=VARCHAR},
+      requestType = #{requesttype,jdbcType=VARCHAR},
+      requestUrl = #{requesturl,jdbcType=VARCHAR},
+      requestHeader = #{requestheader,jdbcType=VARCHAR},
+      requestBody = #{requestbody,jdbcType=VARCHAR},
+      requestOrder = #{requestorder,jdbcType=INTEGER},
+      assertExp = #{assertexp,jdbcType=VARCHAR},
+      moduleId = #{moduleid,jdbcType=INTEGER},
+      _timestamp = #{timestamp,jdbcType=TIMESTAMP},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP}
+    where caseid = #{caseid,jdbcType=INTEGER}
+  </update>
+</mapper>

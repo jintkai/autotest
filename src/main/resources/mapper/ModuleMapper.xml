@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autotest.dao.ModuleMapper" >
+  <resultMap id="BaseResultMap" type="com.autotest.model.Module" >
+    <id column="moduleid" property="moduleid" jdbcType="INTEGER" />
+    <result column="moduleName" property="modulename" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="_timestamp" property="timestamp" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    moduleid, moduleName, pid, _timestamp
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from qa_module
+    where moduleid = #{moduleid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from qa_module
+    where moduleid = #{moduleid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.autotest.model.Module" >
+    insert into qa_module (moduleid, moduleName, pid, 
+      _timestamp)
+    values (#{moduleid,jdbcType=INTEGER}, #{modulename,jdbcType=VARCHAR}, #{pid,jdbcType=INTEGER}, 
+      #{timestamp,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.autotest.model.Module" >
+    insert into qa_module
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="moduleid != null" >
+        moduleid,
+      </if>
+      <if test="modulename != null" >
+        moduleName,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="timestamp != null" >
+        _timestamp,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="moduleid != null" >
+        #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="modulename != null" >
+        #{modulename,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="timestamp != null" >
+        #{timestamp,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autotest.model.Module" >
+    update qa_module
+    <set >
+      <if test="modulename != null" >
+        moduleName = #{modulename,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="timestamp != null" >
+        _timestamp = #{timestamp,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where moduleid = #{moduleid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autotest.model.Module" >
+    update qa_module
+    set moduleName = #{modulename,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=INTEGER},
+      _timestamp = #{timestamp,jdbcType=TIMESTAMP}
+    where moduleid = #{moduleid,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autotest.dao.SuitCaseResultHisMapper" >
+  <resultMap id="BaseResultMap" type="com.autotest.model.SuitCaseResultHis" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="suitcaseid" property="suitcaseid" jdbcType="INTEGER" />
+    <result column="suitid" property="suitid" jdbcType="INTEGER" />
+    <result column="buildid" property="buildid" jdbcType="INTEGER" />
+    <result column="requestInfo" property="requestinfo" jdbcType="VARCHAR" />
+    <result column="responseHeader" property="responseheader" jdbcType="VARCHAR" />
+    <result column="responseBody" property="responsebody" jdbcType="VARCHAR" />
+    <result column="responseCode" property="responsecode" jdbcType="VARCHAR" />
+    <result column="responseTime" property="responsetime" jdbcType="INTEGER" />
+    <result column="assertLog" property="assertlog" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="_timestamp" property="timestamp" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, suitcaseid, suitid, buildid, requestInfo, responseHeader, responseBody, responseCode, 
+    responseTime, assertLog, status, _timestamp
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from qa_suitcase_result_his
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from qa_suitcase_result_his
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.autotest.model.SuitCaseResultHis" >
+    insert into qa_suitcase_result_his (id, suitcaseid, suitid, 
+      buildid, requestInfo, responseHeader, 
+      responseBody, responseCode, responseTime, 
+      assertLog, status, _timestamp
+      )
+    values (#{id,jdbcType=INTEGER}, #{suitcaseid,jdbcType=INTEGER}, #{suitid,jdbcType=INTEGER}, 
+      #{buildid,jdbcType=INTEGER}, #{requestinfo,jdbcType=VARCHAR}, #{responseheader,jdbcType=VARCHAR}, 
+      #{responsebody,jdbcType=VARCHAR}, #{responsecode,jdbcType=VARCHAR}, #{responsetime,jdbcType=INTEGER}, 
+      #{assertlog,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{timestamp,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.autotest.model.SuitCaseResultHis" >
+    insert into qa_suitcase_result_his
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="suitcaseid != null" >
+        suitcaseid,
+      </if>
+      <if test="suitid != null" >
+        suitid,
+      </if>
+      <if test="buildid != null" >
+        buildid,
+      </if>
+      <if test="requestinfo != null" >
+        requestInfo,
+      </if>
+      <if test="responseheader != null" >
+        responseHeader,
+      </if>
+      <if test="responsebody != null" >
+        responseBody,
+      </if>
+      <if test="responsecode != null" >
+        responseCode,
+      </if>
+      <if test="responsetime != null" >
+        responseTime,
+      </if>
+      <if test="assertlog != null" >
+        assertLog,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="timestamp != null" >
+        _timestamp,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="suitcaseid != null" >
+        #{suitcaseid,jdbcType=INTEGER},
+      </if>
+      <if test="suitid != null" >
+        #{suitid,jdbcType=INTEGER},
+      </if>
+      <if test="buildid != null" >
+        #{buildid,jdbcType=INTEGER},
+      </if>
+      <if test="requestinfo != null" >
+        #{requestinfo,jdbcType=VARCHAR},
+      </if>
+      <if test="responseheader != null" >
+        #{responseheader,jdbcType=VARCHAR},
+      </if>
+      <if test="responsebody != null" >
+        #{responsebody,jdbcType=VARCHAR},
+      </if>
+      <if test="responsecode != null" >
+        #{responsecode,jdbcType=VARCHAR},
+      </if>
+      <if test="responsetime != null" >
+        #{responsetime,jdbcType=INTEGER},
+      </if>
+      <if test="assertlog != null" >
+        #{assertlog,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="timestamp != null" >
+        #{timestamp,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autotest.model.SuitCaseResultHis" >
+    update qa_suitcase_result_his
+    <set >
+      <if test="suitcaseid != null" >
+        suitcaseid = #{suitcaseid,jdbcType=INTEGER},
+      </if>
+      <if test="suitid != null" >
+        suitid = #{suitid,jdbcType=INTEGER},
+      </if>
+      <if test="buildid != null" >
+        buildid = #{buildid,jdbcType=INTEGER},
+      </if>
+      <if test="requestinfo != null" >
+        requestInfo = #{requestinfo,jdbcType=VARCHAR},
+      </if>
+      <if test="responseheader != null" >
+        responseHeader = #{responseheader,jdbcType=VARCHAR},
+      </if>
+      <if test="responsebody != null" >
+        responseBody = #{responsebody,jdbcType=VARCHAR},
+      </if>
+      <if test="responsecode != null" >
+        responseCode = #{responsecode,jdbcType=VARCHAR},
+      </if>
+      <if test="responsetime != null" >
+        responseTime = #{responsetime,jdbcType=INTEGER},
+      </if>
+      <if test="assertlog != null" >
+        assertLog = #{assertlog,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="timestamp != null" >
+        _timestamp = #{timestamp,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autotest.model.SuitCaseResultHis" >
+    update qa_suitcase_result_his
+    set suitcaseid = #{suitcaseid,jdbcType=INTEGER},
+      suitid = #{suitid,jdbcType=INTEGER},
+      buildid = #{buildid,jdbcType=INTEGER},
+      requestInfo = #{requestinfo,jdbcType=VARCHAR},
+      responseHeader = #{responseheader,jdbcType=VARCHAR},
+      responseBody = #{responsebody,jdbcType=VARCHAR},
+      responseCode = #{responsecode,jdbcType=VARCHAR},
+      responseTime = #{responsetime,jdbcType=INTEGER},
+      assertLog = #{assertlog,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      _timestamp = #{timestamp,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

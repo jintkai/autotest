@@ -25,7 +25,7 @@
     select
     <include refid="Base_Column_List" />
     from qa_suitcase_build_report
-    where suitid= #{suitid,jdbcType=INTEGER}
+    where suitid= #{suitId,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from qa_suitcase_build_report

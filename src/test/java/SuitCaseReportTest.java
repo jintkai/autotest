@@ -11,6 +11,8 @@ public class SuitCaseReportTest extends AbstractTestNGSpringContextTests {
     SuitCaseReportController service;
     @Test
     public void test(){
+
         System.out.println(service.getSuitCaseBuildReport(1));
+
     }
 }

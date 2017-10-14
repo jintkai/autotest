@@ -19,4 +19,5 @@ public class SuitCaseReportServiceImpl implements SuitCaseReportService {
         return suitCaseReportMapper.selectBySuit(suitId);
     }
 
+
 }

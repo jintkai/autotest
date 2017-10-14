@@ -10,18 +10,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/autotest")
-public class ModuleController {
+@RequestMapping("/modules")
+public class ModuleAction {
 
     @Autowired
     ModuleService moduleService;
 
-    @RequestMapping("/modules")
+    @RequestMapping("/")
     public Map<String,Object> getModules(){
         Map<String,Object> resultMap = new HashMap<String,Object>();
         return resultMap;
     }
-    @RequestMapping("/modules/{moduleName}")
+    @RequestMapping("/{moduleName}")
     public Map<String,Object> getModules(@PathVariable String moduleName){
         Map<String,Object> resultMap = new HashMap<String,Object>();
         resultMap.put("result",moduleService.findModuleByName(moduleName));

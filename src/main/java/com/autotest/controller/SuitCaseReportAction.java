@@ -14,11 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/autotest/suit/buildreport")
->>>>>>> c4b7556d74f92b8b606fc661188baae97cf1ef41
-public class SuitCaseReportController {
+@RequestMapping("/suit/buildreports")
+public class SuitCaseReportAction {
 
-    public final static Logger LOG = LoggerFactory.getLogger(SuitCaseReportController.class);
+    public final static Logger LOG = LoggerFactory.getLogger(SuitCaseReportAction.class);
     @Autowired
     SuitCaseReportService suitCaseReportService;
 

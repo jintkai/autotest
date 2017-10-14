@@ -16,12 +16,14 @@
     from qa_module
     where moduleid = #{moduleid,jdbcType=INTEGER}
   </select>
+
   <select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String">
     select
     <include refid="Base_Column_List" />
     from qa_module
     where moduleName = #{name,jdbcType=VARCHAR}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from qa_module
     where moduleid = #{moduleid,jdbcType=INTEGER}

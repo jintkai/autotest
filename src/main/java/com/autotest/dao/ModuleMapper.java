@@ -4,6 +4,7 @@ import com.autotest.model.Module;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
+
 public interface ModuleMapper {
     int deleteByPrimaryKey(Integer moduleid);
 
@@ -16,6 +17,5 @@ public interface ModuleMapper {
     int updateByPrimaryKeySelective(Module record);
 
     int updateByPrimaryKey(Module record);
-
     Module selectByName(String name);
 }

@@ -17,6 +17,6 @@ public class SuitCaseReportTest2 {
     SuitCaseReportController service;
     @org.junit.Test
     public void test(){
-        System.out.println(service.getBuildReportsBySuitid(1));
+        System.out.println(service.getSuitCaseBuildReport(1));
     }
 }

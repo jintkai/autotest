@@ -1,5 +1,6 @@
 package com.autotest.service.impl.common;
 
+import com.autotest.util.JasonUtil;
 import com.oracle.javafx.jmx.json.JSONException;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -27,6 +28,7 @@ public class HttpClientServiceImpl {
 
         Map<String, String> map = new HashMap<String, String>();
         Class<?> cls = null;
+        Object object = null;
         String className = "";
         switch (requestType) {
             case 0:
@@ -46,17 +48,9 @@ public class HttpClientServiceImpl {
         }
         try {
             cls = Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            LOG.error(e.toString());
-        }
-
-        Object object = null;
-        try {
             object = cls.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOG.error("实例http方法失败+"+e.toString());
         }
 
         HttpMethod method = (HttpMethod) object;
@@ -66,7 +60,7 @@ public class HttpClientServiceImpl {
         //请求头转json
         if (requestHeader != null && !requestHeader.isEmpty()) {
             LOG.info("requestHeader:"+requestHeader);
-            if(isJson(requestHeader)) {
+            if(JasonUtil.isJson(requestHeader)) {
                 try {
                     jsonObject = new JSONObject(requestHeader);
                     Iterator iterator = jsonObject.keys();
@@ -160,16 +154,5 @@ public class HttpClientServiceImpl {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public boolean isJson(String str) {
-        boolean isJson = false;
-        try {
-            JSONObject jsonObject = new JSONObject(str);
-            isJson = true;
-        } catch (JSONException e) {
-            isJson = false;
-        }
-        return isJson;
     }
 }

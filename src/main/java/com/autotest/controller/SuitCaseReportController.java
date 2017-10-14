@@ -14,19 +14,28 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/autotest/suit/buildreport")
+@RequestMapping("/autotest/suit/buildreports")
 public class SuitCaseReportController {
 
     public final static Logger LOG = LoggerFactory.getLogger(SuitCaseReportController.class);
     @Autowired
     SuitCaseReportService suitCaseReportService;
 
+    @RequestMapping
+    public Map<String,Object> getBuildReports(){
+        LOG.debug("查询套件下构建历史报表:");
+        Map<String,Object> resultMap = new HashMap<String,Object>();
+        return resultMap;
+    }
+
     @RequestMapping(value = "/{suitid}")
-    public Map<String,Object> getSuitCaseBuildReport(@PathVariable  Integer suitid){
+    public Map<String,Object> getBuildReportsBySuitid(@PathVariable  Integer suitid){
         LOG.debug("查询套件下构建历史报表:"+suitid);
         Map<String,Object> resultMap = new HashMap<String,Object>();
         List<SuitCaseReport> lists = suitCaseReportService.selectBySuit(suitid);
         resultMap.put("results",lists);
         return resultMap;
     }
+
+
 }

@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan(basePackages={"com"})
-@ConfigurationProperties( "classpath:application.yml")
 @EnableAutoConfiguration
 public class Application implements EmbeddedServletContainerCustomizer {
 

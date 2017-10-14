@@ -22,9 +22,11 @@ public interface SuitCaseReportMapper {
 
     int updateByPrimaryKey(SuitCaseReport record);
 
-    List<SuitCaseReport> selectBySuit(Integer SuitId);
+    List<SuitCaseReport> selectBySuit(Integer suitId);
 
+/*
     @Select("select * from qa_suitcase_build_report")
     List<SuitCaseReport> select();
+*/
 
 }

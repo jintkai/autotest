@@ -16,7 +16,6 @@ public class SuitCaseReportServiceImpl implements SuitCaseReportService {
     SuitCaseReportMapper suitCaseReportMapper;
     @Override
     public List<SuitCaseReport> selectBySuit(Integer suitId) {
-        //suitCaseReportMapper.select();
         return suitCaseReportMapper.selectBySuit(suitId);
     }
 

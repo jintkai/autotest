@@ -9,7 +9,10 @@ import java.util.List;
 public interface VariableMapper {
 
     Variable selectByPrimaryKey(Integer variableid);
+    Variable select(Variable variable);
+
 
     List<Variable> selectBySuitid(Integer suitid);
+
 }
 

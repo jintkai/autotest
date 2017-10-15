@@ -32,4 +32,8 @@ public class VariableReportServiceImpl {
         }
         return variables.size();
     }
+
+    public VariableResult selectResutBy(Integer variableid,Integer buildID){
+        return variableResultMapper.selectByVariableIDAndBuildID(variableid,buildID);
+    }
 }

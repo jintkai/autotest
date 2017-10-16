@@ -20,4 +20,9 @@ public class VariableServiceImpl {
     public List<Variable> selectBySuitID(Integer suitid){
         return variableMapper.selectBySuitid(suitid);
     }
+
+    public Variable selectByVariable(Variable variable){
+        return variableMapper.select(variable);
+    }
+
 }

@@ -13,14 +13,14 @@
   <sql id="Base_Column_List" >
     id,variableid, buildid,value,exception,updatetime,_timestamp
   </sql>
-  <!--select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByVariableIDAndBuildID" resultMap="BaseResultMap" >
     select
     <include refid="Base_Column_List" />
-    from qa_variable
-    where variableid = #{moduleid,jdbcType=INTEGER}
+    from qa_variable_result
+    where variableid = #{variableid,jdbcType=INTEGER} and buildid = #{buildid,jdbcType=INTEGER}
   </select>
 
-  <select id="selectBySuitid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <!--select id="selectBySuitid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
     from qa_variable
@@ -33,4 +33,17 @@
     values (#{variableid,jdbcType=INTEGER},#{buildid,jdbcType=INTEGER},#{value,jdbcType=VARCHAR},#{exception,jdbcType=VARCHAR},now(),now())
   </insert>
 
+    <update id="updateByPrimaryKey" parameterType="com.autotest.model.VariableResult">
+    update qa_variable_result
+    set buildid = #{buildid,jdbcType=INTEGER},
+    <if test="value != null" >
+        value = #{value,jdbcType=VARCHAR},
+    </if>
+        <if test="exception != null" >
+            exception = #{exception,jdbcType=VARCHAR},
+        </if>
+
+    updatetime = now()
+    where id = #{id,jdbcType=INTEGER}
+    </update>
 </mapper>

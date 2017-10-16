@@ -8,6 +8,7 @@ public class Variable {
     private Integer suitid;
     private String name;
     private String varExpress;
+    private Integer sequence;
     private Date timestamp;
     private Date updatetime;
     public Variable(){};
@@ -66,5 +67,13 @@ public class Variable {
 
     public void setUpdatetime(Date updatetime) {
         this.updatetime = updatetime;
+    }
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 }

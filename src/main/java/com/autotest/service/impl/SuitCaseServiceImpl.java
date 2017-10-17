@@ -1,6 +1,7 @@
 package com.autotest.service.impl;
 
 import com.autotest.dao.SuitCaseMapper;
+import com.autotest.model.Suit;
 import com.autotest.model.SuitCase;
 import com.autotest.model.Variable;
 import com.autotest.model.VariableResult;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -22,11 +24,12 @@ public class SuitCaseServiceImpl implements SuitCaseService {
     SuitCaseMapper suitCaseMapper;
     @Autowired
     HttpClientServiceImpl httpClientService;
-
     @Autowired
     VariableServiceImpl variableService;
     @Autowired
-    VariableReportServiceImpl variableReportService;
+    VariableResultServiceImpl variableResultService;
+    @Autowired
+    VariableResolverServerImpl resolverServer;
     @Override
     public SuitCase selectById(Integer id) {
         return suitCaseMapper.selectByPrimaryKey(id);
@@ -38,45 +41,36 @@ public class SuitCaseServiceImpl implements SuitCaseService {
     }
 
     @Override
-    public Map<String, String> suitCaseRun(SuitCase suitCase) {
-        String caseVerify ="";
-        String url = suitCase.getRequesturl();
-        List<String> varList = getVariableList(url);//case中输入的变量名列表
-        List<Variable> variableList = new ArrayList<Variable>();//数据库中对应的变量名列表
-        for (String s :varList){
-            Variable variable = new Variable();
-            s = s.substring(2,s.length()-1);
-            variable.setName(s);
-            variable.setSuitid(suitCase.getSuitid());
-            Variable variable1= variableService.selectByVariable(variable);
-            if (null == variable1){
-                caseVerify = "变量验证失败，case中使用的变量不在变量列表中";
-            }
-            variableList.add(variable1);
+    public Map<String, Object> suitCaseRun(SuitCase suitCase) {
+        Map<String,Object> result = new HashMap<String,Object>();
+        Map<String,Object> urlMap = resolverServer.resolver(suitCase.getSuitid(),10,suitCase.getRequesturl() == null?"":suitCase.getRequesturl());
+        Map<String,Object> headerMap = resolverServer.resolver(suitCase.getSuitid(),10,suitCase.getRequestheader() == null?"":suitCase.getRequestheader());
+        Map<String,Object> bodyMap = resolverServer.resolver(suitCase.getSuitid(),10,suitCase.getRequestbody() == null?"":suitCase.getRequestbody());
+        String message = "";
+        int success = 1;
+        if ((Integer)urlMap.get("success") == 0 ) {
+            message = "URL实例化错误，请检查url是否正确";
+            success = 0;
         }
-        List<VariableResult> variableResultList = new ArrayList<VariableResult>();//数据库中对应的变量名列表
-
-        for(Variable variable:variableList){
-            VariableResult variableValue = variableReportService.selectResutBy(variable.getVariableid(),10);
-            System.out.println(variableValue);
+        if ((Integer) headerMap.get("success")  == 0){
+            message = message + "Header实例化错误，请检查header是否正确";
+            success = 0;
         }
+        if ((Integer) bodyMap.get("success")  == 0){
+            message = message + "Body实例化错误，请检查Body是否正确";
+            success = 0;
+        }
+        result.put("success",success);
+        result.put("message",message);
+        result.put("urlMap",urlMap);
+        result.put("headerMap",headerMap);
+        result.put("bodyMap",bodyMap);
 
-        return httpClientService.sentRequest(Integer.valueOf(suitCase.getRequesttype()),suitCase.getRequesturl(),suitCase.getRequestheader(),suitCase.getRequestbody());
+        //Map<String,String> response = httpClientService.sentRequest(Integer.valueOf(suitCase.getRequesttype()),suitCase.getRequesturl(),suitCase.getRequestheader(),suitCase.getRequestbody());
+
+
+        return result;
     }
 
 
-    public List<String> getVariableList(String source){
-        List<String> variableList = new ArrayList<String>();
-        String regExp = "\\$\\{[a-zA-Z0-9_.\\[\\]]*}";
-        Pattern pattern = Pattern.compile(regExp);
-
-        Matcher matcher = pattern.matcher(source);
-
-        while(matcher.find()){
-            String variable = matcher.group();
-            System.out.println(matcher.group());
-            variableList.add(variable);
-        }
-        return variableList;
-    }
 }

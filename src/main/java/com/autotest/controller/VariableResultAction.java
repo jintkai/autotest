@@ -1,6 +1,6 @@
 package com.autotest.controller;
 
-import com.autotest.service.impl.VariableReportServiceImpl;
+import com.autotest.service.impl.VariableResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,12 +15,12 @@ import java.util.Map;
 public class VariableResultAction {
 
     @Autowired
-    VariableReportServiceImpl variableReportService;
+    VariableResultServiceImpl variableResultService;
 
     @RequestMapping(value = "/add" ,method = RequestMethod.POST)
     public Map<String,Object> getBySuitID(@RequestParam Integer id){
         Map<String,Object> resultMap = new HashMap<String,Object>();
-        resultMap.put("results",variableReportService.copyVariable(id,10));
+        resultMap.put("results",variableResultService.copyVariable(id,10));
         return resultMap;
     }
 }

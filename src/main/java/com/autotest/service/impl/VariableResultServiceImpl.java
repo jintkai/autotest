@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class VariableReportServiceImpl {
+public class VariableResultServiceImpl {
 
     @Autowired
     VariableResultMapper variableResultMapper;

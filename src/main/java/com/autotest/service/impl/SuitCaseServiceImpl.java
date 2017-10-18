@@ -66,7 +66,8 @@ public class SuitCaseServiceImpl implements SuitCaseService {
         result.put("headerMap",headerMap);
         result.put("bodyMap",bodyMap);
 
-        //Map<String,String> response = httpClientService.sentRequest(Integer.valueOf(suitCase.getRequesttype()),suitCase.getRequesturl(),suitCase.getRequestheader(),suitCase.getRequestbody());
+        Map<String,Object> response = httpClientService.sentRequest(Integer.valueOf(suitCase.getRequesttype()),(String) urlMap.get("result"),suitCase.getRequestheader(),(String) bodyMap.get("result"));
+        result.put("runLog",response);
 
 
         return result;

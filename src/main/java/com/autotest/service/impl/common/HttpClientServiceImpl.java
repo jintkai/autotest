@@ -24,9 +24,9 @@ public class HttpClientServiceImpl {
 
     public static final Logger LOG = LoggerFactory.getLogger(HttpClientServiceImpl.class);
 
-    public Map<String, String> sentRequest(int requestType, String requestUrl, String requestHeader, String requestParameters) {
+    public Map<String, Object> sentRequest(int requestType, String requestUrl, String requestHeader, String requestParameters) {
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, Object> map = new HashMap<String, Object>();
         Class<?> cls = null;
         Object object = null;
         String className = "";
@@ -147,8 +147,11 @@ public class HttpClientServiceImpl {
             String response = method.getResponseBodyAsString();
             map.put("ResponseCode", String.valueOf(method.getStatusCode()));
             map.put("ResponseBody", response);
-            map.put("RequestHeaders", Arrays.toString(method.getRequestHeaders()));
-            map.put("ResponseHeaders", Arrays.toString(method.getResponseHeaders()));
+//            map.put("RequestHeaders", Arrays.toString(method.getRequestHeaders()));
+//            map.put("ResponseHeaders", Arrays.toString(method.getResponseHeaders()));
+
+            map.put("RequestHeaders", method.getRequestHeaders());
+            map.put("ResponseHeaders", method.getResponseHeaders());
             return map;
         } catch (IOException e) {
             e.printStackTrace();

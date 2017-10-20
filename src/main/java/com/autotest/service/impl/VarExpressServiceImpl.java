@@ -1,8 +1,10 @@
 package com.autotest.service.impl;
 
+import com.autotest.model.SuitCaseResult;
 import com.autotest.model.VarExpress;
 import com.autotest.model.Variable;
 import com.autotest.model.VariableResult;
+import com.autotest.service.SuitCaseReportService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,11 +22,12 @@ public class VarExpressServiceImpl {
     VariableServiceImpl variableService;
     @Autowired
     VariableResultServiceImpl variableResultService;
-    public Variable tmpVaraiable = new Variable();
-
+    @Autowired
+    SuitCaseResultServiceImpl suitCaseResultService;
     public String resolveExpress(Variable variable,Integer buildid){
         String result ="";
         VarExpress varExpress = new VarExpress();
+        List<VariableResult> results = new ArrayList<VariableResult>();
         ObjectMapper mapper = new ObjectMapper();
         try {
             varExpress = mapper.readValue(variable.getVarExpress(),VarExpress.class);
@@ -35,13 +38,13 @@ public class VarExpressServiceImpl {
         List<String> list = getVariableList(varExpress.getParam());
 
         for (int i = 0 ;i <= list.size() ; i++){
-            variable = resolveExpress1(variable,buildid);
+            variable = resolveVariable(variable,buildid);
         }
         VariableResult variableResult = variableResultService.selectResutBy(variable.getVariableid(),buildid);
         return variableResult.getValue();
 
     }
-    public Variable resolveExpress1(Variable variable,Integer buildid){
+    public Variable resolveVariable(Variable variable,Integer buildid){
         String result ="";
         VarExpress varExpress = new VarExpress();
         ObjectMapper mapper = new ObjectMapper();
@@ -74,6 +77,18 @@ public class VarExpressServiceImpl {
                     variableResult.setValue(result);
                     variableResult.setException("");
                     variableResultService.update(variableResult);
+                }
+                if (varExpress.getMethod().equals("suitbody")){
+                    String s = varExpress.getParam();
+                    SuitCaseResult suitCaseResult = new SuitCaseResult();
+                    suitCaseResult.setSuitcaseid(Integer.valueOf(s));
+                    suitCaseResult.setSuitid(variable.getSuitid());
+                    suitCaseResult.setBuildid(buildid);
+                    suitCaseResult = suitCaseResultService.selectList(suitCaseResult).get(0);
+                    variableResult.setValue(suitCaseResult.getResponsebody());
+                    variableResult.setException("");
+                    variableResultService.update(variableResult);
+                    result = String.valueOf(suitCaseResult.getResponsebody());
                 }
             }
             return variable;

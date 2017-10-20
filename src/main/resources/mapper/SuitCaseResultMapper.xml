@@ -25,6 +25,24 @@
     from qa_suitcase_result
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectList" resultMap="BaseResultMap" parameterType="com.autotest.model.SuitCaseResult" >
+    select
+    <include refid="Base_Column_List" />
+    from qa_suitcase_result
+    where 1=1
+    <if test="id != null">
+      and id = #{id,jdbcType=INTEGER}
+    </if>
+    <if test="suitid != null">
+      and suitid = #{suitid,jdbcType=INTEGER}
+    </if>
+    <if test="buildid !=null">
+      and buildid = #{buildid,jdbcType=INTEGER}
+    </if>
+    <if test="suitcaseid !=null">
+      and suitcaseid = #{suitcaseid,jdbcType=INTEGER}
+    </if>
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from qa_suitcase_result
     where id = #{id,jdbcType=INTEGER}

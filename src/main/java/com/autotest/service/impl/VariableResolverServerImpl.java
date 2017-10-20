@@ -87,4 +87,6 @@ public class VariableResolverServerImpl {
         }
         return variableList;
     }
+
+
 }

@@ -23,4 +23,6 @@ public class VariableResultAction {
         resultMap.put("results",variableResultService.copyVariable(id,10));
         return resultMap;
     }
+
+
 }

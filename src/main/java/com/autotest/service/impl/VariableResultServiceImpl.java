@@ -36,4 +36,8 @@ public class VariableResultServiceImpl {
     public VariableResult selectResutBy(Integer variableid,Integer buildID){
         return variableResultMapper.selectByVariableIDAndBuildID(variableid,buildID);
     }
+
+    public int update(VariableResult variableResult){
+        return variableResultMapper.updateByPrimaryKey(variableResult);
+    }
 }

@@ -12,6 +12,9 @@ public class Variable {
     private Date timestamp;
     private Date updatetime;
     public Variable(){};
+    public Variable(Variable v){
+        this.variableid = v.getVariableid();
+    }
 
     public Integer getVariableid() {
         return variableid;
@@ -76,4 +79,5 @@ public class Variable {
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
     }
+
 }

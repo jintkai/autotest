@@ -1,11 +1,14 @@
 package com.autotest.dao;
 
 import com.autotest.model.Suit;
+import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
+@Mapper
 public interface SuitMapper {
-    int deleteByPrimaryKey(Integer suitid);
 
-    int insert(Suit record);
+    int deleteByPrimaryKey(Integer suitid);
 
     int insertSelective(Suit record);
 
@@ -13,5 +16,5 @@ public interface SuitMapper {
 
     int updateByPrimaryKeySelective(Suit record);
 
-    int updateByPrimaryKey(Suit record);
+    List<Suit> selectByName(String suitname);
 }

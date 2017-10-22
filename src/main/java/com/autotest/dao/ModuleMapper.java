@@ -3,12 +3,12 @@ package com.autotest.dao;
 import com.autotest.model.Module;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
-
 public interface ModuleMapper {
-    int deleteByPrimaryKey(Integer moduleid);
 
-    int insert(Module record);
+    int deleteByPrimaryKey(Integer moduleid);
 
     int insertSelective(Module record);
 
@@ -16,6 +16,5 @@ public interface ModuleMapper {
 
     int updateByPrimaryKeySelective(Module record);
 
-    int updateByPrimaryKey(Module record);
-    Module selectByName(String name);
+    List<Module> selectByName(String name);
 }

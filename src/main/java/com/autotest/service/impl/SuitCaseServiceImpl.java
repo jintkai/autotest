@@ -1,21 +1,15 @@
 package com.autotest.service.impl;
 
 import com.autotest.dao.SuitCaseMapper;
-import com.autotest.model.Suit;
 import com.autotest.model.SuitCase;
-import com.autotest.model.Variable;
-import com.autotest.model.VariableResult;
 import com.autotest.service.SuitCaseService;
 import com.autotest.service.impl.common.HttpClientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class SuitCaseServiceImpl implements SuitCaseService {
@@ -30,6 +24,7 @@ public class SuitCaseServiceImpl implements SuitCaseService {
     VariableResultServiceImpl variableResultService;
     @Autowired
     VariableResolverServerImpl resolverServer;
+
     @Override
     public SuitCase selectById(Integer id) {
         return suitCaseMapper.selectByPrimaryKey(id);
@@ -39,6 +34,32 @@ public class SuitCaseServiceImpl implements SuitCaseService {
     public List<SuitCase> selectBySuitID(Integer suitID) {
         return suitCaseMapper.selectBySuitID(suitID);
     }
+
+    @Override
+    public int deleteSuitCaseById(Integer id){
+        return suitCaseMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public int insertSuitCase(SuitCase record){
+        return suitCaseMapper.insertSelective(record);
+    }
+
+    @Override
+    public SuitCase selectSuitCaseById(Integer id){
+        return suitCaseMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<SuitCase> selectBySuitIdCaseId(Integer suitid,Integer caseid){
+        return suitCaseMapper.selectBySuitIdCaseId(suitid,caseid);
+    }
+
+    @Override
+    public int updateSuitCase(SuitCase record){
+        return suitCaseMapper.updateByPrimaryKeySelective(record);
+    }
+
 
     @Override
     public Map<String, Object> suitCaseRun(SuitCase suitCase) {
@@ -72,6 +93,4 @@ public class SuitCaseServiceImpl implements SuitCaseService {
 
         return result;
     }
-
-
 }

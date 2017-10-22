@@ -32,8 +32,49 @@ public class SuitCaseReportAction {
     public Map<String,Object> getSuitCaseBuildReport(@PathVariable  Integer suitid) {
         LOG.debug("查询套件下构建历史报表:" + suitid);
         Map<String, Object> resultMap = new HashMap<String, Object>();
-        List<SuitCaseReport> lists = suitCaseReportService.selectBySuit(suitid);
+        List<SuitCaseReport> lists = suitCaseReportService.selectBySuitIdbuildId(suitid,null);
         resultMap.put("results", lists);
         return resultMap;
+    }
+
+    @RequestMapping("/delete")
+    int deleteSuitCaseReportById(Integer id){
+        return suitCaseReportService.deleteSuitCaseReportById(id);
+    }
+
+    @RequestMapping("/insert")
+    int insertSuitCaseReport(SuitCaseReport record){
+        if (record != null){
+            return suitCaseReportService.insertSuitCaseReport(record);
+        }
+        return 0;
+    }
+
+    @RequestMapping("/selectById")
+    SuitCaseReport selectSuitCaseReportById(Integer id){
+        return suitCaseReportService.selectSuitCaseReportById(id);
+    }
+
+    @RequestMapping("/update")
+    int updateBSuitCaseReport(SuitCaseReport record){
+        if(record!= null){
+            return suitCaseReportService.updateBSuitCaseReport(record);
+        }
+        return 0;
+    }
+
+    @RequestMapping("/selectByIds")
+    List<SuitCaseReport> selectBySuitIdbuildId(Integer suitid, Integer buildid){
+        if (suitid == null && buildid == null){
+            return null;
+        }
+        else {
+            return suitCaseReportService.selectBySuitIdbuildId(suitid,buildid);
+        }
+    }
+
+    @RequestMapping("/selectAll")
+    List<SuitCaseReport> selectSuitCaseReportAll(){
+        return suitCaseReportService.selectSuitCaseReportAll();
     }
 }

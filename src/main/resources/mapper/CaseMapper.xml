@@ -18,32 +18,29 @@
     caseid, casename, requestType, requestUrl, requestHeader, requestBody, requestOrder, 
     assertExp, moduleId, _timestamp, updatetime
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from qa_case
     where caseid = #{caseid,jdbcType=INTEGER}
   </select>
+
+  <select id="selectByCaseName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from qa_case
+    where casename = #{casename,jdbcType=VARCHAR}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from qa_case
     where caseid = #{caseid,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.autotest.model.Case" >
-    insert into qa_case (caseid, casename, requestType, 
-      requestUrl, requestHeader, requestBody, 
-      requestOrder, assertExp, moduleId, 
-      _timestamp, updatetime)
-    values (#{caseid,jdbcType=INTEGER}, #{casename,jdbcType=VARCHAR}, #{requesttype,jdbcType=VARCHAR}, 
-      #{requesturl,jdbcType=VARCHAR}, #{requestheader,jdbcType=VARCHAR}, #{requestbody,jdbcType=VARCHAR}, 
-      #{requestorder,jdbcType=INTEGER}, #{assertexp,jdbcType=VARCHAR}, #{moduleid,jdbcType=INTEGER}, 
-      #{timestamp,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.autotest.model.Case" >
     insert into qa_case
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="caseid != null" >
-        caseid,
-      </if>
       <if test="casename != null" >
         casename,
       </if>
@@ -76,9 +73,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="caseid != null" >
-        #{caseid,jdbcType=INTEGER},
-      </if>
       <if test="casename != null" >
         #{casename,jdbcType=VARCHAR},
       </if>
@@ -110,7 +104,11 @@
         #{updatetime,jdbcType=TIMESTAMP},
       </if>
     </trim>
+    <selectKey resultType="java.lang.Integer" keyProperty="caseid">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.autotest.model.Case" >
     update qa_case
     <set >
@@ -147,18 +145,5 @@
     </set>
     where caseid = #{caseid,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.autotest.model.Case" >
-    update qa_case
-    set casename = #{casename,jdbcType=VARCHAR},
-      requestType = #{requesttype,jdbcType=VARCHAR},
-      requestUrl = #{requesturl,jdbcType=VARCHAR},
-      requestHeader = #{requestheader,jdbcType=VARCHAR},
-      requestBody = #{requestbody,jdbcType=VARCHAR},
-      requestOrder = #{requestorder,jdbcType=INTEGER},
-      assertExp = #{assertexp,jdbcType=VARCHAR},
-      moduleId = #{moduleid,jdbcType=INTEGER},
-      _timestamp = #{timestamp,jdbcType=TIMESTAMP},
-      updatetime = #{updatetime,jdbcType=TIMESTAMP}
-    where caseid = #{caseid,jdbcType=INTEGER}
-  </update>
+
 </mapper>

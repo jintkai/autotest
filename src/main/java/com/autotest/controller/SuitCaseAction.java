@@ -8,14 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/suitcases")
-public class SuitCaseActionAction {
+@RequestMapping("/suitcase")
+public class SuitCaseAction {
 
     @Autowired
     SuitCaseService suitCaseService;
@@ -24,7 +23,7 @@ public class SuitCaseActionAction {
     @RequestMapping("/{id}")
     public Map<String,Object> getSuitCases(@PathVariable( name = "id") Integer id){
         Map<String,Object> resultMap = new HashMap<String,Object>();
-        SuitCase o = suitCaseService.selectById(id);
+        SuitCase o = suitCaseService.selectSuitCaseById(id);
         resultMap.put("results",o);
         return resultMap;
     }
@@ -32,7 +31,7 @@ public class SuitCaseActionAction {
     @RequestMapping("/")
     public Map<String,Object> getSuitCasesBySuitID(Integer suitID){
         Map<String,Object> resultMap = new HashMap<String,Object>();
-        List<SuitCase> o = suitCaseService.selectBySuitID(suitID);
+        List<SuitCase> o = suitCaseService.selectBySuitIdCaseId(suitID,null);
         resultMap.put("results",o);
         return resultMap;
     }
@@ -40,8 +39,35 @@ public class SuitCaseActionAction {
     @RequestMapping(value = "/run/{id}" ,method = RequestMethod.POST)
     public Map<String,Object> runSuitCase(@PathVariable Integer id){
         Map<String,Object> resultMap = new HashMap<String,Object>();
-        SuitCase o = suitCaseService.selectById(id);
+        SuitCase o = suitCaseService.selectSuitCaseById(id);
         resultMap.put("result",suitCaseService.suitCaseRun(o));
         return resultMap;
+    }
+
+    @RequestMapping("/delete")
+    int deleteSuitCaseById(Integer id){
+        return suitCaseService.deleteSuitCaseById(id);
+    }
+
+    @RequestMapping("/insert")
+    int insertSuitCase(SuitCase record){
+        if (record != null){
+            return suitCaseService.insertSuitCase(record);
+        }
+        return 0;
+    }
+
+
+    @RequestMapping("/selectBySuitIdCaseId")
+    List<SuitCase> selectBySuitIdCaseId(Integer suitid,Integer caseid){
+        if (suitid == null && caseid == null){
+            return null;
+        }
+        return suitCaseService.selectBySuitIdCaseId(suitid,caseid);
+    }
+
+    @RequestMapping("/update")
+    int updateSuitCase(SuitCase record){
+        return suitCaseService.updateSuitCase(record);
     }
 }

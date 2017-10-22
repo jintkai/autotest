@@ -10,6 +10,7 @@
   <sql id="Base_Column_List" >
     moduleid, moduleName, pid, _timestamp
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -28,18 +29,10 @@
     delete from qa_module
     where moduleid = #{moduleid,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.autotest.model.Module" >
-    insert into qa_module (moduleid, moduleName, pid, 
-      _timestamp)
-    values (#{moduleid,jdbcType=INTEGER}, #{modulename,jdbcType=VARCHAR}, #{pid,jdbcType=INTEGER}, 
-      #{timestamp,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.autotest.model.Module" >
     insert into qa_module
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="moduleid != null" >
-        moduleid,
-      </if>
       <if test="modulename != null" >
         moduleName,
       </if>
@@ -51,9 +44,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="moduleid != null" >
-        #{moduleid,jdbcType=INTEGER},
-      </if>
       <if test="modulename != null" >
         #{modulename,jdbcType=VARCHAR},
       </if>
@@ -64,7 +54,11 @@
         #{timestamp,jdbcType=TIMESTAMP},
       </if>
     </trim>
+    <selectKey resultType="java.lang.Integer" keyProperty="moduleid">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.autotest.model.Module" >
     update qa_module
     <set >
@@ -78,13 +72,6 @@
         _timestamp = #{timestamp,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where moduleid = #{moduleid,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.autotest.model.Module" >
-    update qa_module
-    set moduleName = #{modulename,jdbcType=VARCHAR},
-      pid = #{pid,jdbcType=INTEGER},
-      _timestamp = #{timestamp,jdbcType=TIMESTAMP}
     where moduleid = #{moduleid,jdbcType=INTEGER}
   </update>
 </mapper>

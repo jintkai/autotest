@@ -12,5 +12,15 @@ public interface SuitCaseService {
 
     Map<String, Object> suitCaseRun(SuitCase suitCase);
 
+    int deleteSuitCaseById(Integer id);
+
+    int insertSuitCase(SuitCase record);
+
+    SuitCase selectSuitCaseById(Integer id);
+
+    List<SuitCase> selectBySuitIdCaseId(Integer suitid,Integer caseid);
+
+    int updateSuitCase(SuitCase record);
+
 
 }

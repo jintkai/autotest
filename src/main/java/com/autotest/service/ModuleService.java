@@ -2,7 +2,17 @@ package com.autotest.service;
 
 import com.autotest.model.Module;
 
+import java.util.List;
+
 public interface ModuleService {
-    Module findModuleByName(String name);
-    Module findModuleByID(Integer id);
+
+    int deleteModuleById(Integer moduleid);
+
+    int insertModule(Module record);
+
+    Module selectModuleById(Integer moduleid);
+
+    int updateModule(Module record);
+
+    List<Module> selectModuleByName(String name);
 }

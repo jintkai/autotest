@@ -11,28 +11,29 @@
   <sql id="Base_Column_List" >
     suitid, suitName, lastbuildid, status, _timestamp
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from qa_suit
     where suitid = #{suitid,jdbcType=INTEGER}
   </select>
+
+  <select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from qa_suit
+    where suitName = #{suitname,jdbcType=VARCHAR}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from qa_suit
     where suitid = #{suitid,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.autotest.model.Suit" >
-    insert into qa_suit (suitid, suitName, lastbuildid, 
-      status, _timestamp)
-    values (#{suitid,jdbcType=INTEGER}, #{suitname,jdbcType=VARCHAR}, #{lastbuildid,jdbcType=INTEGER}, 
-      #{status,jdbcType=INTEGER}, #{timestamp,jdbcType=TIMESTAMP})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.autotest.model.Suit" >
     insert into qa_suit
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="suitid != null" >
-        suitid,
-      </if>
       <if test="suitname != null" >
         suitName,
       </if>
@@ -47,9 +48,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="suitid != null" >
-        #{suitid,jdbcType=INTEGER},
-      </if>
       <if test="suitname != null" >
         #{suitname,jdbcType=VARCHAR},
       </if>
@@ -63,7 +61,11 @@
         #{timestamp,jdbcType=TIMESTAMP},
       </if>
     </trim>
+    <selectKey resultType="java.lang.Integer" keyProperty="id">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.autotest.model.Suit" >
     update qa_suit
     <set >
@@ -80,14 +82,6 @@
         _timestamp = #{timestamp,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where suitid = #{suitid,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.autotest.model.Suit" >
-    update qa_suit
-    set suitName = #{suitname,jdbcType=VARCHAR},
-      lastbuildid = #{lastbuildid,jdbcType=INTEGER},
-      status = #{status,jdbcType=INTEGER},
-      _timestamp = #{timestamp,jdbcType=TIMESTAMP}
     where suitid = #{suitid,jdbcType=INTEGER}
   </update>
 </mapper>

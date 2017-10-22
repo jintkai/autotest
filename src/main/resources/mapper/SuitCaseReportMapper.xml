@@ -15,38 +15,36 @@
   <sql id="Base_Column_List" >
     id, suitid, buildid, total, success, fail, successPer, unexe, _timestamp
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from qa_suitcase_build_report
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="selectBySuit" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+
+  <select id="selectBySuitIdbuildId" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
     <include refid="Base_Column_List" />
     from qa_suitcase_build_report
-    where suitid= #{suitId,jdbcType=INTEGER}
+    <where>
+      <if test="suitid != null">
+        AND suitid = #{suitid}
+      </if>
+      <if test="buildid != null">
+        AND buildid = #{buildid}
+      </if>
+    </where>
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from qa_suitcase_build_report
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.autotest.model.SuitCaseReport" >
-    insert into qa_suitcase_build_report (id, suitid, buildid, 
-      total, success, fail, 
-      successPer, unexe, _timestamp
-      )
-    values (#{id,jdbcType=INTEGER}, #{suitid,jdbcType=INTEGER}, #{buildid,jdbcType=INTEGER}, 
-      #{total,jdbcType=INTEGER}, #{success,jdbcType=INTEGER}, #{fail,jdbcType=INTEGER}, 
-      #{successper,jdbcType=REAL}, #{unexe,jdbcType=INTEGER}, #{timestamp,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.autotest.model.SuitCaseReport" >
     insert into qa_suitcase_build_report
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
       <if test="suitid != null" >
         suitid,
       </if>
@@ -73,9 +71,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="suitid != null" >
         #{suitid,jdbcType=INTEGER},
       </if>
@@ -101,7 +96,11 @@
         #{timestamp,jdbcType=TIMESTAMP},
       </if>
     </trim>
+    <selectKey resultType="java.lang.Integer" keyProperty="id">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.autotest.model.SuitCaseReport" >
     update qa_suitcase_build_report
     <set >
@@ -130,18 +129,6 @@
         _timestamp = #{timestamp,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.autotest.model.SuitCaseReport" >
-    update qa_suitcase_build_report
-    set suitid = #{suitid,jdbcType=INTEGER},
-      buildid = #{buildid,jdbcType=INTEGER},
-      total = #{total,jdbcType=INTEGER},
-      success = #{success,jdbcType=INTEGER},
-      fail = #{fail,jdbcType=INTEGER},
-      successPer = #{successper,jdbcType=REAL},
-      unexe = #{unexe,jdbcType=INTEGER},
-      _timestamp = #{timestamp,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

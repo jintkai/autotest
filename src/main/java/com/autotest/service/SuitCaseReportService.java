@@ -7,5 +7,16 @@ import java.util.List;
 
 public interface SuitCaseReportService {
 
-    public List<SuitCaseReport> selectBySuit(Integer suitid);
+    int deleteSuitCaseReportById(Integer id);
+
+    int insertSuitCaseReport(SuitCaseReport record);
+
+    SuitCaseReport selectSuitCaseReportById(Integer id);
+
+    int updateBSuitCaseReport(SuitCaseReport record);
+
+    List<SuitCaseReport> selectBySuitIdbuildId(Integer suitid,Integer buildid);
+
+    List<SuitCaseReport> selectSuitCaseReportAll();
+
 }

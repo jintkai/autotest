@@ -3,12 +3,12 @@ package com.autotest.dao;
 import com.autotest.model.Case;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
 
 @Mapper
 public interface CaseMapper {
-    int deleteByPrimaryKey(Integer caseid);
 
-    int insert(Case record);
+    int deleteByPrimaryKey(Integer caseid);
 
     int insertSelective(Case record);
 
@@ -16,5 +16,5 @@ public interface CaseMapper {
 
     int updateByPrimaryKeySelective(Case record);
 
-    int updateByPrimaryKey(Case record);
+    List<Case> selectByCaseName(String casename);
 }

@@ -19,34 +19,39 @@
     id, suitcaseid, suitid, buildid, responseHeader, responseBody, responseCode, responseTime, 
     assertLog, status, _timestamp, updatetime
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from qa_suitcase_result
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectBySuitIdbuildIdSuitCaseId" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select
+    <include refid="Base_Column_List" />
+    from qa_suitcase_result_his
+    <where>
+      <if test="suitcaseid != null">
+        AND suitcaseid = #{suitcaseid}
+      </if>
+      <if test="suitid != null">
+        AND suitid = #{suitid}
+      </if>
+      <if test="buildid != null">
+        AND buildid = #{buildid}
+      </if>
+    </where>
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from qa_suitcase_result
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.autotest.model.SuitCaseResult" >
-    insert into qa_suitcase_result (id, suitcaseid, suitid, 
-      buildid, responseHeader, responseBody, 
-      responseCode, responseTime, assertLog, 
-      status, _timestamp, updatetime
-      )
-    values (#{id,jdbcType=INTEGER}, #{suitcaseid,jdbcType=INTEGER}, #{suitid,jdbcType=INTEGER}, 
-      #{buildid,jdbcType=INTEGER}, #{responseheader,jdbcType=VARCHAR}, #{responsebody,jdbcType=VARCHAR}, 
-      #{responsecode,jdbcType=VARCHAR}, #{responsetime,jdbcType=INTEGER}, #{assertlog,jdbcType=VARCHAR}, 
-      #{status,jdbcType=INTEGER}, #{timestamp,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.autotest.model.SuitCaseResult" >
     insert into qa_suitcase_result
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
       <if test="suitcaseid != null" >
         suitcaseid,
       </if>
@@ -82,9 +87,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="suitcaseid != null" >
         #{suitcaseid,jdbcType=INTEGER},
       </if>
@@ -119,7 +121,11 @@
         #{updatetime,jdbcType=TIMESTAMP},
       </if>
     </trim>
+    <selectKey resultType="java.lang.Integer" keyProperty="id">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.autotest.model.SuitCaseResult" >
     update qa_suitcase_result
     <set >
@@ -157,21 +163,6 @@
         updatetime = #{updatetime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.autotest.model.SuitCaseResult" >
-    update qa_suitcase_result
-    set suitcaseid = #{suitcaseid,jdbcType=INTEGER},
-      suitid = #{suitid,jdbcType=INTEGER},
-      buildid = #{buildid,jdbcType=INTEGER},
-      responseHeader = #{responseheader,jdbcType=VARCHAR},
-      responseBody = #{responsebody,jdbcType=VARCHAR},
-      responseCode = #{responsecode,jdbcType=VARCHAR},
-      responseTime = #{responsetime,jdbcType=INTEGER},
-      assertLog = #{assertlog,jdbcType=VARCHAR},
-      status = #{status,jdbcType=INTEGER},
-      _timestamp = #{timestamp,jdbcType=TIMESTAMP},
-      updatetime = #{updatetime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

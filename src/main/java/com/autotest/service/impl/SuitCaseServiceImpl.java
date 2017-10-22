@@ -17,15 +17,32 @@ public class SuitCaseServiceImpl implements SuitCaseService {
     SuitCaseMapper suitCaseMapper;
     @Autowired
     HttpClientServiceImpl httpClientService;
+
     @Override
-    public SuitCase selectById(Integer id) {
+    public int deleteSuitCaseById(Integer id){
+        return suitCaseMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public int insertSuitCase(SuitCase record){
+        return suitCaseMapper.insertSelective(record);
+    }
+
+    @Override
+    public SuitCase selectSuitCaseById(Integer id){
         return suitCaseMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public List<SuitCase> selectBySuitID(Integer suitID) {
-        return suitCaseMapper.selectBySuitID(suitID);
+    public List<SuitCase> selectBySuitIdCaseId(Integer suitid,Integer caseid){
+        return suitCaseMapper.selectBySuitIdCaseId(suitid,caseid);
     }
+
+    @Override
+    public int updateSuitCase(SuitCase record){
+        return suitCaseMapper.updateByPrimaryKeySelective(record);
+    }
+
 
     @Override
     public Map<String, String> suitCaseRun(SuitCase suitCase) {

@@ -7,15 +7,15 @@ import java.util.List;
 
 @Mapper
 public interface SuitCaseMapper {
-    int deleteByPrimaryKey(Integer id);
 
-    int insert(SuitCase record);
+    int deleteByPrimaryKey(Integer id);
 
     int insertSelective(SuitCase record);
 
     SuitCase selectByPrimaryKey(Integer id);
-    List<SuitCase> selectBySuitID(Integer suitid);
+
+    List<SuitCase> selectBySuitIdCaseId(Integer suitid,Integer caseid);
+
     int updateByPrimaryKeySelective(SuitCase record);
 
-    int updateByPrimaryKey(SuitCase record);
 }

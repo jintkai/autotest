@@ -18,4 +18,7 @@ public interface SuitCaseMapper {
 
     int updateByPrimaryKeySelective(SuitCase record);
 
+    List<SuitCase> selectBySuitID(Integer suitid);
+
+
 }

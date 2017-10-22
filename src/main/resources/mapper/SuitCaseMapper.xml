@@ -30,6 +30,13 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
+  <select id="selectBySuitID" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from qa_suitcase
+    where suitid = #{suitid,jdbcType=INTEGER} and
+  </select>
+
   <select id="selectBySuitIdCaseId" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
     <include refid="Base_Column_List" />

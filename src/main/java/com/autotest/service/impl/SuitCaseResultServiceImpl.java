@@ -17,8 +17,9 @@ public class SuitCaseResultServiceImpl implements SuitCaseResultService {
     @Autowired
     SuitCaseResultMapper suitCaseResultMapper;
 
-    public List<SuitCaseResult> selectList(SuitCaseResult suitCaseResult){
+    public List<SuitCaseResult> selectList(SuitCaseResult suitCaseResult) {
         return suitCaseResultMapper.selectList(suitCaseResult);
+    }
     @Override
     public int deleteSuitResultById(Integer id){
         return suitCaseResultMapper.deleteByPrimaryKey(id);

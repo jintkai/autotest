@@ -10,7 +10,7 @@ public interface SuitCaseService {
     SuitCase selectById(Integer id);
     List<SuitCase> selectBySuitID(Integer suitID);
 
-    Map<String, String> suitCaseRun(SuitCase suitCase);
+    Map<String, Object> suitCaseRun(SuitCase suitCase);
 
     int deleteSuitCaseById(Integer id);
 

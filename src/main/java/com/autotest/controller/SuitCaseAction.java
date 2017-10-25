@@ -1,5 +1,6 @@
 package com.autotest.controller;
 
+import com.autotest.model.Suit;
 import com.autotest.model.SuitCase;
 import com.autotest.service.SuitCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +37,25 @@ public class SuitCaseAction {
         return resultMap;
     }
 
-    @RequestMapping(value = "/run/{id}" ,method = RequestMethod.POST)
-    public Map<String,Object> runSuitCase(@PathVariable Integer id){
+    @RequestMapping(value = "/run/" ,method = RequestMethod.POST)
+    public Map<String,Object> runSuitCase( Integer id,Integer buildid){
         Map<String,Object> resultMap = new HashMap<String,Object>();
         SuitCase o = suitCaseService.selectSuitCaseById(id);
-        resultMap.put("result",suitCaseService.suitCaseRun(o));
+        resultMap.put("result",suitCaseService.suitCaseRun(o,buildid));
         return resultMap;
     }
+
+    @RequestMapping(value = "/runsuit/" ,method = RequestMethod.POST)
+    public Map<String,Object> runSuit( Integer id,Integer buildid){
+        Map<String,Object> resultMap = new HashMap<String,Object>();
+        List<SuitCase> lists = suitCaseService.selectBySuitID(id);
+        for (SuitCase suitCase : lists) {
+            runSuitCase(suitCase.getId(),buildid);
+        }
+        resultMap.put("result",lists);
+        return resultMap;
+    }
+
 
     @RequestMapping("/delete")
     int deleteSuitCaseById(Integer id){

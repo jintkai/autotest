@@ -5,6 +5,7 @@ import java.util.Date;
 public class Variable {
     private Integer variableid;
     private String type;
+    private Integer suitcaseId;
     private Integer suitid;
     private String name;
     private String varExpress;
@@ -14,6 +15,14 @@ public class Variable {
     public Variable(){};
     public Variable(Variable v){
         this.variableid = v.getVariableid();
+    }
+
+    public Integer getSuitcaseId() {
+        return suitcaseId;
+    }
+
+    public void setSuitcaseId(Integer suitcaseId) {
+        this.suitcaseId = suitcaseId;
     }
 
     public Integer getVariableid() {

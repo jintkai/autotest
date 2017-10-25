@@ -5,6 +5,7 @@
     <id column="variableid" property="variableid" jdbcType="INTEGER" />
     <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="suitid" property="suitid" jdbcType="INTEGER" />
+    <result column="suitcaseid" property="suitcaseId" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="varExpress" property="varExpress" jdbcType="VARCHAR"/>
     <result column="sequence" property="sequence" jdbcType="INTEGER" />
@@ -12,7 +13,7 @@
     <result column="_timestamp" property="timestamp" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    variableid, type, suitid, name ,varExpress, sequence,updatetime, _timestamp
+    variableid, type, suitid, suitcaseId,name ,varExpress, sequence,updatetime, _timestamp
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -26,6 +27,13 @@
     <include refid="Base_Column_List" />
     from qa_variable
     where suitid = #{suitid,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectBySuitCaseId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from qa_variable
+    where suitcaseId = #{suitcaseId,jdbcType=INTEGER} order by sequence asc
   </select>
 
   <select id="select" resultMap="BaseResultMap" parameterType="com.autotest.model.Variable" >

@@ -34,7 +34,7 @@
     select
     <include refid="Base_Column_List" />
     from qa_suitcase
-    where suitid = #{suitid,jdbcType=INTEGER} and
+    where suitid = #{suitid,jdbcType=INTEGER} order by requestOrder asc
   </select>
 
   <select id="selectBySuitIdCaseId" resultMap="BaseResultMap" parameterType="java.util.Map">

@@ -1,7 +1,10 @@
 package com.autotest.service.impl;
 
 import com.autotest.dao.SuitCaseMapper;
+import com.autotest.model.HttpInfo;
 import com.autotest.model.SuitCase;
+import com.autotest.model.SuitCaseResult;
+import com.autotest.model.Variable;
 import com.autotest.service.SuitCaseService;
 import com.autotest.service.impl.common.HttpClientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,8 @@ public class SuitCaseServiceImpl implements SuitCaseService {
 
     @Autowired
     SuitCaseMapper suitCaseMapper;
+    @Autowired
+    SuitCaseResultServiceImpl suitCaseResultService;
     @Autowired
     HttpClientServiceImpl httpClientService;
     @Autowired
@@ -62,7 +67,10 @@ public class SuitCaseServiceImpl implements SuitCaseService {
 
 
     @Override
-    public Map<String, Object> suitCaseRun(SuitCase suitCase) {
+    public Map<String, Object> suitCaseRun(SuitCase suitCase,int buildid) {
+
+        //拷贝用例变量到result表
+        variableResultService.copyVariable(suitCase.getSuitid(),buildid);
         Map<String,Object> result = new HashMap<String,Object>();
         Map<String,Object> urlMap = resolverServer.resolver(suitCase.getSuitid(),10,suitCase.getRequesturl() == null?"":suitCase.getRequesturl());
         Map<String,Object> headerMap = resolverServer.resolver(suitCase.getSuitid(),10,suitCase.getRequestheader() == null?"":suitCase.getRequestheader());
@@ -87,10 +95,55 @@ public class SuitCaseServiceImpl implements SuitCaseService {
         result.put("headerMap",headerMap);
         result.put("bodyMap",bodyMap);
 
-        Map<String,Object> response = httpClientService.sentRequest(Integer.valueOf(suitCase.getRequesttype()),(String) urlMap.get("result"),suitCase.getRequestheader(),(String) bodyMap.get("result"));
-        result.put("runLog",response);
+        HttpInfo httpInfo = httpClientService.sentRequest(Integer.valueOf(suitCase.getRequesttype()),(String) urlMap.get("result"),suitCase.getRequestheader(),(String) bodyMap.get("result"));
 
+        //发送请求后，根据caseid，实例化参数；
+        if (httpInfo.getIsSuccess() ==1 ) {
+            /**
+             * 变量解析逻辑
+             */
+            List<Variable> caseVariables = variableService.selectBySuitCaseId(suitCase.getId());
+            for (Variable variable : caseVariables) {
+                variableService.resolveExpress(variable, buildid, httpInfo);
+            }
+            /**
+             * 断言逻辑
+             */
 
+            if(Integer.valueOf(httpInfo.getResponseCode()) >=400)
+            {
+                httpInfo.setIsSuccess(0);
+                httpInfo.setResponseLog("请求地址错误！");
+            }
+
+        }
+        /**
+         * 存储结果逻辑
+         */
+
+        SuitCaseResult suitCaseResult = new SuitCaseResult();
+        suitCaseResult.setSuitcaseid(suitCase.getCaseid());
+        suitCaseResult.setBuildid(buildid);
+        List<SuitCaseResult> lists = suitCaseResultService.selectList(suitCaseResult);
+        suitCaseResult.setSuitid(suitCase.getSuitid());
+        suitCaseResult.setResponsecode(httpInfo.getResponseCode());
+        suitCaseResult.setResponsebody(httpInfo.getResponseBody());
+        suitCaseResult.setResponseheader(httpInfo.getResponseHeader());
+        suitCaseResult.setAssertlog(httpInfo.getResponseLog());
+        suitCaseResult.setResponsetime(Integer.valueOf(String.valueOf(httpInfo.getResponseTime())));
+        suitCaseResult.setStatus(httpInfo.getIsSuccess());
+        if (lists.size() == 1){
+            suitCaseResult.setId(lists.get(0).getId());
+            suitCaseResultService.updateSuitResult(suitCaseResult);
+        }else {
+            suitCaseResultService.insertSuitResult(suitCaseResult);
+        }
+        result.put("runLog",httpInfo);
+
+        /**
+         * 后置变量处理
+         *
+         */
         return result;
     }
 }

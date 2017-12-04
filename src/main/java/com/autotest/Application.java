@@ -30,7 +30,7 @@ public class Application implements EmbeddedServletContainerCustomizer {
 
     @Override
     public void customize(ConfigurableEmbeddedServletContainer configurableEmbeddedServletContainer) {
-        configurableEmbeddedServletContainer.setPort(8095);
+        configurableEmbeddedServletContainer.setPort(8096);
     }
 
     }

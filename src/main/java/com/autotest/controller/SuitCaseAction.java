@@ -32,10 +32,12 @@ public class SuitCaseAction {
     @RequestMapping("/")
     public Map<String,Object> getSuitCasesBySuitID(Integer suitID){
         Map<String,Object> resultMap = new HashMap<String,Object>();
-        List<SuitCase> o = suitCaseService.selectBySuitIdCaseId(suitID,null);
+        List<SuitCase> o = suitCaseService.selectBySuitID(suitID);
         resultMap.put("results",o);
         return resultMap;
     }
+
+
 
     @RequestMapping(value = "/run/" ,method = RequestMethod.POST)
     public Map<String,Object> runSuitCase( Integer id,Integer buildid){

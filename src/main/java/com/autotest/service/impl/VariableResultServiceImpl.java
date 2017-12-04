@@ -28,7 +28,9 @@ public class VariableResultServiceImpl {
             VariableResult variableResult = new VariableResult();
             variableResult.setVariableid(v.getVariableid());
             variableResult.setBuildid(buildID);
-            insert(variableResult);
+            if (selectResutBy(v.getVariableid(),buildID) == null) {
+                insert(variableResult);
+            }
         }
         return variables.size();
     }

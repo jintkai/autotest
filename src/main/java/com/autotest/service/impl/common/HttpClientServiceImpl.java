@@ -1,7 +1,7 @@
 package com.autotest.service.impl.common;
 
+import com.autotest.model.HttpInfo;
 import com.autotest.util.JasonUtil;
-import com.oracle.javafx.jmx.json.JSONException;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -9,24 +9,21 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
-import org.json.JSONObject;
 
 @Service
 public class HttpClientServiceImpl {
 
     public static final Logger LOG = LoggerFactory.getLogger(HttpClientServiceImpl.class);
 
-    public Map<String, Object> sentRequest(int requestType, String requestUrl, String requestHeader, String requestParameters) {
-
-        Map<String, Object> map = new HashMap<String, Object>();
+    public HttpInfo sentRequest(int requestType, String requestUrl, String requestHeader, String requestParameters) {
+        HttpInfo httpInfo = new HttpInfo();
         Class<?> cls = null;
         Object object = null;
         String className = "";
@@ -109,28 +106,31 @@ public class HttpClientServiceImpl {
                     } else {
                         method.setQueryString(pairs);
                     }
-                    map.put("RequestParam", Arrays.toString(pairs));
+                    httpInfo.setRequestParam(Arrays.toString(pairs));
                 }
                 else {
                     //json格式
                     RequestEntity entity = new StringRequestEntity(requestParameters);
                     ((PostMethod) method).setRequestEntity(entity);
-
-                    map.put("RequestParam", requestParameters);
+                    httpInfo.setRequestParam(requestParameters);
                 }
             }
-
-            map.put("URI", method.getURI().toString());
+            httpInfo.setRequestUrl(method.getURI().toString());
         } catch (URIException e) {
-            e.printStackTrace();
+            httpInfo.setIsSuccess(0);
+            StringBuffer buffer = new StringBuffer(httpInfo.getResponseLog());
+            buffer = buffer.append("请求头或者参错误，无法发送请求。\n -----------------------------------\n");
+            httpInfo.setResponseLog(buffer.toString());
+            LOG.error(e.toString());
+            return httpInfo;
         }
 
         HttpClient httpClient = new HttpClient();
 
 
         httpClient.getHttpConnectionManager().getParams()
-                .setConnectionTimeout(3000);
-        httpClient.getHttpConnectionManager().getParams().setSoTimeout(3000);
+                .setConnectionTimeout(10000);
+        httpClient.getHttpConnectionManager().getParams().setSoTimeout(10000);
 
 
         try {
@@ -139,20 +139,26 @@ public class HttpClientServiceImpl {
             httpClient.executeMethod(method);
             Date end = new Date();
             long responseTime = end.getTime() - begin.getTime();
-            map.put("ResponseTime", String.valueOf(responseTime));
+            httpInfo.setResponseTime(responseTime);
         } catch (IOException e) {
+            LOG.error("发送请求失败："+e.toString());
+            httpInfo.setIsSuccess(0);
+            if (e.toString().contains("Connection refused"))
+            {
+                StringBuffer buffer = new StringBuffer(httpInfo.getResponseLog());
+                buffer = buffer.append("拒绝链接。\n -----------------------------------\n");
+                httpInfo.setResponseLog(buffer.toString());
+                return httpInfo;
+            }
             e.printStackTrace();
         }
         try {
             String response = method.getResponseBodyAsString();
-            map.put("ResponseCode", String.valueOf(method.getStatusCode()));
-            map.put("ResponseBody", response);
-//            map.put("RequestHeaders", Arrays.toString(method.getRequestHeaders()));
-//            map.put("ResponseHeaders", Arrays.toString(method.getResponseHeaders()));
-
-            map.put("RequestHeaders", method.getRequestHeaders());
-            map.put("ResponseHeaders", method.getResponseHeaders());
-            return map;
+            httpInfo.setResponseCode(String.valueOf(method.getStatusCode()));
+            httpInfo.setResponseBody(response.length()<=1024? response:response.substring(0,1024));
+            httpInfo.setResponseHeader(Arrays.toString(method.getResponseHeaders()));
+            httpInfo.setIsSuccess(1);
+            return httpInfo;
         } catch (IOException e) {
             e.printStackTrace();
         }

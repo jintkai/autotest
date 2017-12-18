@@ -5,8 +5,10 @@ import com.autotest.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +22,7 @@ public class ModuleAction {
     @RequestMapping("/")
     public Map<String, Object> getModules() {
         Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("result",moduleService.selectModules());
         return resultMap;
     }
 
@@ -41,14 +44,18 @@ public class ModuleAction {
         return moduleService.deleteModuleById(moduleid);
     }
 
-    @RequestMapping("/insert")
-    int insertModule(Module record) {
-        if (record != null) {
-            return moduleService.insertModule(record);
-        }
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public Map<String, Object> insertModule(Module record) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put("message","已经存在!");
-        return 0;
+        if (record != null) {
+            if (moduleService.insertModule(record) == 1){
+                resultMap.put("message","插入数据库成功!");
+            }else{
+                resultMap.put("message","插入数据库失败!");
+            }
+        }
+        resultMap.put("message","已经存在,检查模块名称、模块父ID");
+        return resultMap;
     }
 
     @RequestMapping("/update")

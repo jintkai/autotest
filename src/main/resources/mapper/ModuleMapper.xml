@@ -25,6 +25,12 @@
     where moduleName = #{name,jdbcType=VARCHAR}
   </select>
 
+  <select id="selectModules" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from qa_module
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from qa_module
     where moduleid = #{moduleid,jdbcType=INTEGER}

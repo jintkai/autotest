@@ -38,4 +38,12 @@ public class ModuleServiceImpl  implements ModuleService{
     public List<Module> selectModuleByName(String name){
         return moduleMapper.selectByName(name);
     }
+
+    @Override
+    public List<Module> selectModules() {
+        List<Module> list = moduleMapper.selectModules();
+        return list;
+    }
+
+
 }

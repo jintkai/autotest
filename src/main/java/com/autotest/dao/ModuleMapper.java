@@ -17,4 +17,6 @@ public interface ModuleMapper {
     int updateByPrimaryKeySelective(Module record);
 
     List<Module> selectByName(String name);
+
+    List<Module> selectModules();
 }

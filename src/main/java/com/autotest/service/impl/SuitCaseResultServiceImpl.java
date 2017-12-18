@@ -27,7 +27,7 @@ public class SuitCaseResultServiceImpl implements SuitCaseResultService {
 
     @Override
     public int insertSuitResult(SuitCaseResult record){
-        return suitCaseResultMapper.insertSelective(record);
+        return suitCaseResultMapper.insert(record);
     }
 
     @Override

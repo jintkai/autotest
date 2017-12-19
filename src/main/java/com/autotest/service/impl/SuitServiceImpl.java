@@ -24,7 +24,12 @@ public class SuitServiceImpl implements SuitService{
 
     @Override
     public int insertSuit(Suit record){
-        return suitMapper.insertSelective(record);
+        List<Suit> suitList = selectSuitByName(record.getSuitname());
+        if (suitList.size() == 0){
+            return suitMapper.insertSelective(record);
+        }else{
+            return 0;
+        }
     }
 
     @Override
@@ -33,8 +38,17 @@ public class SuitServiceImpl implements SuitService{
     }
 
     @Override
+    public List<Suit> selectSuitList() {
+        return suitMapper.selectSuitList();
+    }
+
+    @Override
     public int updateSuit(Suit record){
-        return suitMapper.updateByPrimaryKeySelective(record);
+        List<Suit> suitList = selectSuitByName(record.getSuitname());
+        if (suitList.size() == 1 && suitList.get(0).getSuitid() == record.getSuitid() || suitList.size() == 0){
+            return suitMapper.updateByPrimaryKeySelective(record);
+        }
+        return 0;
     }
 
     @Override

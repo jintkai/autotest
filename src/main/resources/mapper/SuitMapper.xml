@@ -25,6 +25,11 @@
     from qa_suit
     where suitName = #{suitname,jdbcType=VARCHAR}
   </select>
+  <select id="selectSuitList" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from qa_suit
+  </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from qa_suit
@@ -61,7 +66,7 @@
         #{timestamp,jdbcType=TIMESTAMP},
       </if>
     </trim>
-    <selectKey resultType="java.lang.Integer" keyProperty="id">
+    <selectKey resultType="java.lang.Integer" keyProperty="suitid">
       SELECT LAST_INSERT_ID()
     </selectKey>
   </insert>

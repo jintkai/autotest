@@ -21,7 +21,11 @@ public class ModuleServiceImpl  implements ModuleService{
 
     @Override
     public int insertModule(Module record){
-        return moduleMapper.insertSelective(record);
+        if(moduleMapper.selectByNameAndPid(record).size() == 0){
+            return moduleMapper.insertSelective(record);
+        }else{
+            return 0;
+        }
     }
 
     @Override
@@ -31,7 +35,16 @@ public class ModuleServiceImpl  implements ModuleService{
 
     @Override
     public int updateModule(Module record){
-        return moduleMapper.updateByPrimaryKeySelective(record);
+        List<Module> modules = moduleMapper.selectByNameAndPid(record);
+        if (modules.size() == 0){
+            return moduleMapper.updateByPrimaryKeySelective(record);
+        }
+        if (modules.size() == 1 && modules.get(0).getModuleid() == record.getModuleid() ) {
+            return moduleMapper.updateByPrimaryKeySelective(record);
+        }else{
+            //更新失败，数据重复;
+            return 0;
+        }
     }
 
     @Override

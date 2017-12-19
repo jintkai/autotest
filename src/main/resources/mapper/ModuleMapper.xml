@@ -31,6 +31,13 @@
     from qa_module
   </select>
 
+  <select id="selectByNameAndPid" resultMap="BaseResultMap" parameterType="com.autotest.model.Module">
+    select
+    <include refid="Base_Column_List" />
+    from qa_module
+    where modulename= #{modulename,jdbcType = VARCHAR} and pid = #{pid,jdbcType=INTEGER}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from qa_module
     where moduleid = #{moduleid,jdbcType=INTEGER}
@@ -43,10 +50,7 @@
         moduleName,
       </if>
       <if test="pid != null" >
-        pid,
-      </if>
-      <if test="timestamp != null" >
-        _timestamp,
+        pid,_timestamp,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -55,10 +59,11 @@
       </if>
       <if test="pid != null" >
         #{pid,jdbcType=INTEGER},
+        now()
       </if>
-      <if test="timestamp != null" >
+      <!--if test="timestamp != null" >
         #{timestamp,jdbcType=TIMESTAMP},
-      </if>
+      </if-->
     </trim>
     <selectKey resultType="java.lang.Integer" keyProperty="moduleid">
       SELECT LAST_INSERT_ID()

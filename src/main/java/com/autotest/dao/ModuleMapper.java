@@ -19,4 +19,5 @@ public interface ModuleMapper {
     List<Module> selectByName(String name);
 
     List<Module> selectModules();
+    List<Module> selectByNameAndPid(Module record);
 }

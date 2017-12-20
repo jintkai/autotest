@@ -1,5 +1,6 @@
 package com.autotest.controller;
 
+import com.autotest.model.BaseResp;
 import com.autotest.model.Suit;
 import com.autotest.model.SuitCase;
 import com.autotest.service.SuitCaseService;
@@ -30,11 +31,12 @@ public class SuitCaseAction {
     }
 
     @RequestMapping("/")
-    public Map<String,Object> getSuitCasesBySuitID(Integer suitID){
-        Map<String,Object> resultMap = new HashMap<String,Object>();
-        List<SuitCase> o = suitCaseService.selectBySuitID(suitID);
-        resultMap.put("results",o);
-        return resultMap;
+    public BaseResp getSuitCasesBySuitID(Integer suitID){
+        BaseResp baseResp = new BaseResp();
+        List<SuitCase> caseList = suitCaseService.selectBySuitID(suitID);
+        baseResp.setCode(200);
+        baseResp.setData(caseList);
+        return baseResp;
     }
 
 

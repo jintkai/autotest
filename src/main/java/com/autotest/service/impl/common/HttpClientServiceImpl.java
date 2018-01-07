@@ -47,7 +47,7 @@ public class HttpClientServiceImpl {
             cls = Class.forName(className);
             object = cls.newInstance();
         } catch (Exception e) {
-            LOG.error("实例http方法失败+"+e.toString());
+            LOG.error("http方法错误"+e.toString());
         }
 
         HttpMethod method = (HttpMethod) object;
@@ -119,7 +119,7 @@ public class HttpClientServiceImpl {
         } catch (URIException e) {
             httpInfo.setIsSuccess(0);
             StringBuffer buffer = new StringBuffer(httpInfo.getResponseLog());
-            buffer = buffer.append("请求头或者参错误，无法发送请求。\n -----------------------------------\n");
+            buffer = buffer.append("请求头或者参错误，无法发送请求。");
             httpInfo.setResponseLog(buffer.toString());
             LOG.error(e.toString());
             return httpInfo;
@@ -137,19 +137,37 @@ public class HttpClientServiceImpl {
             Date begin = new Date();
 
             httpClient.executeMethod(method);
+
+            if(Integer.valueOf(method.getStatusCode()) >= 400){
+                httpInfo.setIsSuccess(0);
+                httpInfo.setResponseTime(0L);
+                httpInfo.setResponseLog("HttpResponseCode Error:"+method.getStatusCode());
+                return httpInfo;
+            }
+
             Date end = new Date();
             long responseTime = end.getTime() - begin.getTime();
             httpInfo.setResponseTime(responseTime);
-        } catch (IOException e) {
-            LOG.error("发送请求失败："+e.toString());
+        } catch (Exception e) {
+            //此处用来设置返回error
             httpInfo.setIsSuccess(0);
-            if (e.toString().contains("Connection refused"))
-            {
+            if (e.getClass().getName().equals("org.apache.commons.httpclient.ConnectTimeoutException") ||
+                    e.getClass().getName().equals("java.net.SocketTimeoutException")){
+                LOG.error("链接超时...");
                 StringBuffer buffer = new StringBuffer(httpInfo.getResponseLog());
-                buffer = buffer.append("拒绝链接。\n -----------------------------------\n");
+                buffer = buffer.append("链接超时。");
                 httpInfo.setResponseLog(buffer.toString());
                 return httpInfo;
             }
+            if (e.toString().contains("Connection refused"))
+            {
+                LOG.error("拒绝链接...");
+                StringBuffer buffer = new StringBuffer(httpInfo.getResponseLog());
+                buffer = buffer.append("拒绝链接...");
+                httpInfo.setResponseLog(buffer.toString());
+                return httpInfo;
+            }
+
             e.printStackTrace();
         }
         try {

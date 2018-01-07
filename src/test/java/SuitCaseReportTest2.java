@@ -13,6 +13,7 @@ public class SuitCaseReportTest2 {
 
     @org.junit.Test
     public void test(){
+        System.out.println("hello");
     }
 
 }

@@ -44,7 +44,7 @@ public class VariableAction {
     public Map<String,Object> resolveVariable(@RequestParam Integer id){
         Map<String,Object> resultMap = new HashMap<String,Object>();
         Variable variable = variableService.selectByID(id);
-        resultMap.put("resolve",varExpressService.resolveExpress(variable,10));
+        resultMap.put("resolve",varExpressService.resolveExpress(variable,1));
         return resultMap;
     }
 

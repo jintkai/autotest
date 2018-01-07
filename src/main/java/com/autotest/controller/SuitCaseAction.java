@@ -41,12 +41,14 @@ public class SuitCaseAction {
 
 
 
-    @RequestMapping(value = "/run/" ,method = RequestMethod.POST)
-    public Map<String,Object> runSuitCase( Integer id,Integer buildid){
-        Map<String,Object> resultMap = new HashMap<String,Object>();
+    @RequestMapping(value = "/run" ,method = RequestMethod.POST)
+    public BaseResp runCase( Integer id,Integer buildid){
+        BaseResp baseResp = new BaseResp();
         SuitCase o = suitCaseService.selectSuitCaseById(id);
-        resultMap.put("result",suitCaseService.suitCaseRun(o,buildid));
-        return resultMap;
+        Object result = suitCaseService.suitCaseRun(o,buildid);
+        baseResp.setCode(200);
+        baseResp.setData(result);
+        return baseResp;
     }
 
     @RequestMapping(value = "/runsuit/" ,method = RequestMethod.POST)
@@ -54,7 +56,7 @@ public class SuitCaseAction {
         Map<String,Object> resultMap = new HashMap<String,Object>();
         List<SuitCase> lists = suitCaseService.selectBySuitID(id);
         for (SuitCase suitCase : lists) {
-            runSuitCase(suitCase.getId(),buildid);
+            runCase(suitCase.getId(),buildid);
         }
         resultMap.put("result",lists);
         return resultMap;

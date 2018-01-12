@@ -13,7 +13,7 @@
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from qa_suit
     where suitid = #{suitid,jdbcType=INTEGER}

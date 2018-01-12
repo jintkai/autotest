@@ -2,7 +2,7 @@ logs/*
 target/*
 *.class
 *.log
-
+/target/
 # IntelliJ project files
 *.iml
 *.iws

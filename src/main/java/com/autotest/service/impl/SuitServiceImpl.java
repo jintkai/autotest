@@ -56,6 +56,4 @@ public class SuitServiceImpl implements SuitService{
         return suitMapper.selectByName(suitname);
     }
 
-
-
 }

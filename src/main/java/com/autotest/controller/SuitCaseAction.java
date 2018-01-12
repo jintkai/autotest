@@ -4,11 +4,13 @@ import com.autotest.model.BaseResp;
 import com.autotest.model.Suit;
 import com.autotest.model.SuitCase;
 import com.autotest.service.SuitCaseService;
+import com.autotest.service.SuitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import sun.misc.Request;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,9 @@ public class SuitCaseAction {
 
     @Autowired
     SuitCaseService suitCaseService;
+
+    @Autowired
+    SuitService suitService;
 
 
     @RequestMapping("/{id}")
@@ -51,19 +56,52 @@ public class SuitCaseAction {
         return baseResp;
     }
 
-    @RequestMapping(value = "/runsuit/" ,method = RequestMethod.POST)
-    public Map<String,Object> runSuit( Integer id,Integer buildid){
+
+
+    @RequestMapping(value = "/runsuit" ,method = RequestMethod.POST)
+    public BaseResp runSuit( Integer id,Integer buildid,boolean debug){
+        BaseResp baseResp = new BaseResp();
+        if (debug){
+            buildid = 0;
+        }else{
+            Suit suit = suitService.selectSuitById(id);
+            if ( null == suit ){
+                buildid = 1;
+            }else{
+                if (suit.getStatus() == 1){
+                    baseResp.setCode(500);
+                    baseResp.setMsg("Suit is running now.Run it after finished please!");
+                    return baseResp;
+                }else
+                    buildid = suit.getLastbuildid()+1;
+            }
+            suit.setLastbuildid(buildid);
+            suit.setStatus(1);
+            suitService.updateSuit(suit);
+        }
+
         Map<String,Object> resultMap = new HashMap<String,Object>();
         List<SuitCase> lists = suitCaseService.selectBySuitID(id);
         for (SuitCase suitCase : lists) {
             runCase(suitCase.getId(),buildid);
         }
         resultMap.put("result",lists);
-        return resultMap;
+        if (!debug){
+            Suit suit = new Suit();
+            suit.setSuitid(id);
+            suit.setStatus(0);
+            suitService.updateSuit(suit);
+        }
+
+        baseResp.setCode(200);
+        baseResp.setData(resultMap);
+        return baseResp;
     }
 
 
-    @RequestMapping("/delete")
+
+
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
     int deleteSuitCaseById(Integer id){
         return suitCaseService.deleteSuitCaseById(id);
     }

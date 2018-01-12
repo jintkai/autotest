@@ -87,6 +87,9 @@ public class SuitCaseServiceImpl implements SuitCaseService {
         AssertModel headerAssert = new AssertModel();
         AssertModel bodyAssert = new AssertModel();
         urlAssert.setAssertType("url");
+        headerAssert.setAssertType("header");
+        bodyAssert.setAssertType("body");
+
         if ((Integer) urlMap.get("success") == 0 ) {
             urlAssert.setSuccess(0);
             urlAssert.setMessage((String ) urlMap.get("message"));
@@ -99,7 +102,6 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             urlAssert.setSuccess(1);
         }
 
-        headerAssert.setAssertType("header");
         if ((Integer) headerMap.get("success")  == 0){
             headerAssert.setSuccess(0);
             headerAssert.setMessage((String ) headerMap.get("message"));
@@ -112,7 +114,6 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             headerAssert.setSuccess(1);
         }
 
-        bodyAssert.setAssertType("body");
         if ((Integer) bodyMap.get("success")  == 0){
             bodyAssert.setSuccess(0);
             bodyAssert.setMessage((String ) bodyMap.get("message"));
@@ -228,4 +229,5 @@ public class SuitCaseServiceImpl implements SuitCaseService {
 
         return result;
     }
+
 }

@@ -18,4 +18,5 @@ public interface SuitMapper {
 
     List<Suit> selectByName(String suitname);
     List<Suit> selectSuitList();
+
 }

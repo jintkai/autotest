@@ -1,5 +1,6 @@
 package com.autotest.controller;
 
+import com.autotest.model.BaseResp;
 import com.autotest.model.Variable;
 import com.autotest.service.impl.VarExpressServiceImpl;
 import com.autotest.service.impl.VariableServiceImpl;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,10 +35,18 @@ public class VariableAction {
         return resultMap;
     }
 
-    @RequestMapping(value = "/suitID" ,method = RequestMethod.POST)
-    public Map<String,Object> getBySuitID(@RequestParam Integer id){
-        Map<String,Object> resultMap = new HashMap<String,Object>();
-        return resultMap;
+    @RequestMapping(value = "/suitID" ,method = RequestMethod.GET)
+    public BaseResp getBySuitID(@RequestParam Integer id){
+        BaseResp baseResp = new BaseResp();
+        List<Variable> variableList = variableService.selectBySuitID(id);
+        if(variableList == null){
+            baseResp.setMsg("查询结果空！");
+            baseResp.setCode(500);
+        }else{
+            baseResp.setCode(200);
+            baseResp.setData(variableList);
+        }
+        return baseResp;
     }
 
 
@@ -44,7 +54,7 @@ public class VariableAction {
     public Map<String,Object> resolveVariable(@RequestParam Integer id){
         Map<String,Object> resultMap = new HashMap<String,Object>();
         Variable variable = variableService.selectByID(id);
-        resultMap.put("resolve",varExpressService.resolveExpress(variable,10));
+        resultMap.put("resolve",varExpressService.resolveExpress(variable,1));
         return resultMap;
     }
 

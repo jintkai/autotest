@@ -17,4 +17,6 @@ public interface SuitMapper {
     int updateByPrimaryKeySelective(Suit record);
 
     List<Suit> selectByName(String suitname);
+    List<Suit> selectSuitList();
+
 }

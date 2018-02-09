@@ -1,12 +1,15 @@
 package com.autotest.controller;
 
+import com.autotest.model.BaseResp;
 import com.autotest.model.Module;
 import com.autotest.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +23,7 @@ public class ModuleAction {
     @RequestMapping("/")
     public Map<String, Object> getModules() {
         Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("result",moduleService.selectModules());
         return resultMap;
     }
 
@@ -36,27 +40,46 @@ public class ModuleAction {
         return moduleService.selectModuleById(moduleid);
     }
 
-    @RequestMapping("/delete")
-    int deleteModuleById(Integer moduleid) {
-        return moduleService.deleteModuleById(moduleid);
+    @RequestMapping(value = "/delete")
+    BaseResp deleteModuleById(Integer moduleid) {
+        BaseResp baseResp = new BaseResp();
+
+        int result = moduleService.deleteModuleById(moduleid);
+        if (result ==1){
+            baseResp.setCode(200);
+        }else {
+            baseResp.setCode(500);
+        }
+        return baseResp;
     }
 
-    @RequestMapping("/insert")
-    int insertModule(Module record) {
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public BaseResp insertModule(Module record) {
+        BaseResp resp = new BaseResp();
         if (record != null) {
-            return moduleService.insertModule(record);
+            if (moduleService.insertModule(record) == 1){
+                resp.setCode(200);
+            }else{
+                resp.setCode(500);
+                resp.setMsg("增加失败，检查moduleName，modulePid是否重复");
+            }
         }
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put("message","已经存在!");
-        return 0;
+        return resp;
     }
 
-    @RequestMapping("/update")
-    int updateModule(Module record) {
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
+    public BaseResp updateModule(Module record) {
+        BaseResp resp = new BaseResp();
         if (record != null){
-            return moduleService.updateModule(record);
+            int result = moduleService.updateModule(record);
+            if(result == 1){
+                resp.setCode(200);
+            }else {
+                resp.setCode(500);
+                resp.setMsg("数据重复，无法提交!");
+            }
         }
-        return 0;
+        return resp;
     }
 
 }

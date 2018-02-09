@@ -15,4 +15,6 @@ public interface ModuleService {
     int updateModule(Module record);
 
     List<Module> selectModuleByName(String name);
+
+    List<Module> selectModules();
 }

@@ -48,7 +48,6 @@ public class VariableServiceImpl {
 
         while(matcher.find()){
             String variable = matcher.group();
-            System.out.println(matcher.group());
             variableList.add(variable);
         }
         return variableList;

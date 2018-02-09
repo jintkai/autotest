@@ -2,6 +2,7 @@ package com.autotest.dao;
 
 import com.autotest.model.SuitCaseResult;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -20,5 +21,7 @@ public interface SuitCaseResultMapper {
     int updateByPrimaryKey(SuitCaseResult record);
     List<SuitCaseResult> selectList(SuitCaseResult suitCaseResult);
     List<SuitCaseResult> selectBySuitIdbuildIdSuitCaseId(Integer suitcaseid, Integer suitid, Integer buildid);
+    SuitCaseResult selectBySuitIdAndbuild(@Param("suitcaseid")Integer suitcaseid, @Param("buildid") Integer buildid);
+
 
 }

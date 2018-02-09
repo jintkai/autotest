@@ -19,4 +19,6 @@ public interface SuitCaseResultService {
 
     List<SuitCaseResult> selectBySuitIdbuildIdSuitCaseId(Integer suitcaseid, Integer suitid, Integer buildid);
 
+    SuitCaseResult selectSuitResult(Integer suitcaseid,Integer buildid);
+
 }

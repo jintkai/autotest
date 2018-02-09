@@ -44,4 +44,9 @@ public class SuitCaseResultServiceImpl implements SuitCaseResultService {
     public List<SuitCaseResult> selectBySuitIdbuildIdSuitCaseId(Integer suitcaseid, Integer suitid, Integer buildid){
         return suitCaseResultMapper.selectBySuitIdbuildIdSuitCaseId(suitcaseid,suitid,buildid);
     }
+
+    @Override
+    public SuitCaseResult selectSuitResult(Integer suitcaseid, Integer buildid) {
+        return suitCaseResultMapper.selectBySuitIdAndbuild(suitcaseid,buildid);
+    }
 }

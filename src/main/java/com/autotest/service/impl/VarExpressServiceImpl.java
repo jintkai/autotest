@@ -59,7 +59,7 @@ public class VarExpressServiceImpl {
             //变量中没有使用其他变量
             VariableResult variableResult = variableResultService.selectResutBy(variable.getVariableid(),buildid);
             //value没有值，或者value = null时，进行赋值计算；
-            if (variableResult.getValue().equals("") || variableResult.getValue() == null) {
+            if ( variableResult.getValue() == null || variableResult.getValue().equals("") ) {
                 if (varExpress.getMethod().equals("random")) {
                     String s = varExpress.getParam();
                     int i = ((int) (Math.random() * 10000)) % Integer.valueOf(s);

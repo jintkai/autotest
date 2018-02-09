@@ -14,7 +14,7 @@ public interface SuitService {
     int insertSuit(Suit record);
 
     Suit selectSuitById(Integer suitid);
-
+    List<Suit> selectSuitList();
     int updateSuit(Suit record);
 
     List<Suit> selectSuitByName(String suitname);

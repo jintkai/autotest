@@ -1,9 +1,11 @@
 package com.autotest.controller;
 
+import com.autotest.model.BaseResp;
 import com.autotest.model.SuitCaseResult;
 import com.autotest.service.SuitCaseResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -47,6 +49,22 @@ public class SuitCaseResultAction {
     @RequestMapping("/selectByIds")
     List<SuitCaseResult> selectBySuitIdbuildIdSuitCaseId(Integer suitcaseid, Integer suitid, Integer buildid){
         return suitCaseResultService.selectBySuitIdbuildIdSuitCaseId(suitcaseid,suitid,buildid);
+    }
+
+    @RequestMapping(value="/getSuitResult",method = RequestMethod.POST)
+    public BaseResp getSuitResult(Integer suitcaseid, Integer buildid){
+        BaseResp baseResp = new BaseResp();
+
+        SuitCaseResult caseResult = suitCaseResultService.selectSuitResult(suitcaseid,buildid);
+        if(caseResult == null){
+            baseResp.setCode(500);
+            baseResp.setMsg("查询结果空!");
+        }else{
+            baseResp.setCode(200);
+            baseResp.setData(caseResult);
+        }
+
+        return baseResp;
     }
 
 

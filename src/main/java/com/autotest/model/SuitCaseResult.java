@@ -11,6 +11,12 @@ public class SuitCaseResult {
 
     private Integer buildid;
 
+    private String requestHeader;
+
+    private String requestBody;
+
+    private String requestUrl;
+
     private String responseheader;
 
     private String responsebody;
@@ -121,5 +127,29 @@ public class SuitCaseResult {
 
     public void setUpdatetime(Date updatetime) {
         this.updatetime = updatetime;
+    }
+
+    public String getRequestHeader() {
+        return requestHeader;
+    }
+
+    public void setRequestHeader(String requestHeader) {
+        this.requestHeader = requestHeader;
+    }
+
+    public String getRequestBody() {
+        return requestBody;
+    }
+
+    public void setRequestBody(String requestBody) {
+        this.requestBody = requestBody;
+    }
+
+    public String getRequestUrl() {
+        return requestUrl;
+    }
+
+    public void setRequestUrl(String requestUrl) {
+        this.requestUrl = requestUrl;
     }
 }

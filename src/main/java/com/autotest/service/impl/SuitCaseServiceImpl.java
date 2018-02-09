@@ -67,7 +67,7 @@ public class SuitCaseServiceImpl implements SuitCaseService {
 
 
     @Override
-    public Map<String, Object> suitCaseRun(SuitCase suitCase,int buildid) {
+    public SuitCaseResult suitCaseRun(SuitCase suitCase,int buildid) {
         BaseResp urlRequest = new BaseResp();
         BaseResp headerRequest = new BaseResp();
         BaseResp bodyRequest = new BaseResp();
@@ -147,8 +147,11 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             }
 
             suitCaseResult.setAssertlog(jsonStr);
-            suitCaseResult.setSuitcaseid(suitCase.getCaseid());
+            suitCaseResult.setSuitcaseid(suitCase.getId());
             suitCaseResult.setBuildid(buildid);
+            suitCaseResult.setRequestBody(bodyRequest.getMsg());
+            suitCaseResult.setRequestUrl(urlRequest.getMsg());
+            suitCaseResult.setRequestHeader(headerRequest.getMsg());
             List<SuitCaseResult> lists = suitCaseResultService.selectList(suitCaseResult);
             suitCaseResult.setSuitid(suitCase.getSuitid());
             suitCaseResult.setStatus(0);
@@ -164,7 +167,8 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             result.put("urlFormat",urlRequest);
             result.put("headerFormat",headerRequest);
             result.put("bodyFormat",bodyRequest);
-            return result;
+            result.put("HHHHHH",suitCaseResult);
+            return suitCaseResult;
         }
         //解析成功，继续执行
         HttpInfo httpInfo = new HttpInfo();
@@ -209,10 +213,13 @@ public class SuitCaseServiceImpl implements SuitCaseService {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        suitCaseResult.setSuitcaseid(suitCase.getCaseid());
+        suitCaseResult.setSuitcaseid(suitCase.getId());
         suitCaseResult.setBuildid(buildid);
         List<SuitCaseResult> lists = suitCaseResultService.selectList(suitCaseResult);
         suitCaseResult.setSuitid(suitCase.getSuitid());
+        suitCaseResult.setRequestHeader(headerRequest.getMsg());
+        suitCaseResult.setRequestUrl(urlRequest.getMsg());
+        suitCaseResult.setRequestBody(bodyRequest.getMsg());
         suitCaseResult.setResponsecode(httpInfo.getResponseCode());
         suitCaseResult.setResponsebody(httpInfo.getResponseBody());
         suitCaseResult.setResponseheader(httpInfo.getResponseHeader());
@@ -226,8 +233,8 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             suitCaseResultService.insertSuitResult(suitCaseResult);
         }
         result.put("runLog",httpInfo);
-
-        return result;
+        result.put("HHHHHH",suitCaseResult);
+        return suitCaseResult;
     }
 
 }

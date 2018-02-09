@@ -44,7 +44,13 @@ public class SuitAction {
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     public BaseResp insertSuit(Suit record){
         BaseResp baseResp = new BaseResp();
-
+        if(record.getSuitname().equals("")){
+            baseResp.setCode(500);
+            baseResp.setMsg("suitName不允许为空");
+            return baseResp;
+        }
+        record.setStatus(0);
+        record.setLastbuildid(0);
         if ( record != null){
             if(suitService.insertSuit(record) == 1) {
                 baseResp.setCode(200);

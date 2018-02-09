@@ -43,7 +43,19 @@ public class SuitCaseAction {
         baseResp.setData(caseList);
         return baseResp;
     }
-
+    @RequestMapping("/getByid")
+    public BaseResp getSuitCaseByID(Integer id){
+        BaseResp baseResp = new BaseResp();
+        SuitCase suitCase = suitCaseService.selectSuitCaseById(id);
+        if (suitCase == null){
+            baseResp.setCode(500);
+            baseResp.setMsg("查询结果空");
+        }else{
+            baseResp.setCode(200);
+            baseResp.setData(suitCase);
+        }
+        return baseResp;
+    }
 
 
     @RequestMapping(value = "/run" ,method = RequestMethod.POST)
@@ -102,16 +114,28 @@ public class SuitCaseAction {
 
 
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
-    int deleteSuitCaseById(Integer id){
-        return suitCaseService.deleteSuitCaseById(id);
+    public BaseResp deleteSuitCaseById(Integer id){
+        BaseResp baseResp = new BaseResp();
+        if (suitCaseService.deleteSuitCaseById(id) == 1){
+            baseResp.setCode(200);
+        }else{
+            baseResp.setCode(500);
+            baseResp.setMsg("删除失败");
+        }
+        return baseResp;
     }
 
     @RequestMapping("/insert")
-    int insertSuitCase(SuitCase record){
-        if (record != null){
-            return suitCaseService.insertSuitCase(record);
+    public BaseResp insertSuitCase(SuitCase record){
+        BaseResp baseResp = new BaseResp();
+        int i = suitCaseService.insertSuitCase(record);
+        if (i == 1){
+            baseResp.setCode(200);
+        }else{
+            baseResp.setCode(500);
+            baseResp.setMsg("插入数据库失败!");
         }
-        return 0;
+        return baseResp;
     }
 
 
@@ -124,7 +148,16 @@ public class SuitCaseAction {
     }
 
     @RequestMapping("/update")
-    int updateSuitCase(SuitCase record){
-        return suitCaseService.updateSuitCase(record);
+    public BaseResp updateSuitCase(SuitCase record){
+        BaseResp baseResp = new BaseResp();
+        int i = suitCaseService.updateSuitCase(record);
+        if (i == 1){
+            baseResp.setCode(200);
+        }else{
+            baseResp.setCode(500);
+            System.out.println("更新数据库失败："+record);
+            baseResp.setMsg("更新数据库失败："+record);
+        }
+        return baseResp;
     }
 }

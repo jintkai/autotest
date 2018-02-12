@@ -10,6 +10,8 @@ public interface SuitCaseService {
 
     SuitCase selectById(Integer id);
     List<SuitCase> selectBySuitID(Integer suitID);
+    List<SuitCase> selectMainCaseBySuitID(Integer suitID);
+
 
     SuitCaseResult suitCaseRun(SuitCase suitCase, int buildid);
 
@@ -20,7 +22,10 @@ public interface SuitCaseService {
     SuitCase selectSuitCaseById(Integer id);
 
 
+
     List<SuitCase> selectBySuitIdCaseId(Integer suitid,Integer caseid);
+
+    List<SuitCase> selectSubCase(Integer caseid);
 
     int updateSuitCase(SuitCase record);
 

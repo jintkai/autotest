@@ -39,6 +39,11 @@ public class SuitCaseServiceImpl implements SuitCaseService {
     public List<SuitCase> selectBySuitID(Integer suitID) {
         return suitCaseMapper.selectBySuitID(suitID);
     }
+    @Override
+    public List<SuitCase> selectMainCaseBySuitID(Integer suitID){
+        return suitCaseMapper.selectMainCaseBySuitID(suitID);
+
+    }
 
     @Override
     public int deleteSuitCaseById(Integer id){
@@ -58,6 +63,11 @@ public class SuitCaseServiceImpl implements SuitCaseService {
     @Override
     public List<SuitCase> selectBySuitIdCaseId(Integer suitid,Integer caseid){
         return suitCaseMapper.selectBySuitIdCaseId(suitid,caseid);
+    }
+
+    @Override
+    public List<SuitCase> selectSubCase(Integer caseid) {
+        return suitCaseMapper.selectSubCase(caseid);
     }
 
     @Override

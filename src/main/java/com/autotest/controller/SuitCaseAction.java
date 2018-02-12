@@ -57,6 +57,22 @@ public class SuitCaseAction {
         return baseResp;
     }
 
+    @RequestMapping("/getMainCase")
+    public BaseResp getMainCase(Integer suitID){
+        BaseResp baseResp = new BaseResp();
+        List<SuitCase> caseList = suitCaseService.selectMainCaseBySuitID(suitID);
+        baseResp.setCode(200);
+        baseResp.setData(caseList);
+        return baseResp;
+    }
+    @RequestMapping("/getSubCase")
+    public BaseResp getSubCaseByMainCase(Integer caseid){
+        BaseResp baseResp = new BaseResp();
+        List<SuitCase> suitCases = suitCaseService.selectSubCase(caseid);
+        baseResp.setCode(200);
+        baseResp.setData(suitCases);
+        return baseResp;
+    }
 
     @RequestMapping(value = "/run" ,method = RequestMethod.POST)
     public BaseResp runCase( Integer id,Integer buildid){

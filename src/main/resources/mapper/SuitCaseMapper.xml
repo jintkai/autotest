@@ -1,202 +1,237 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.autotest.dao.SuitCaseMapper" >
-  <resultMap id="BaseResultMap" type="com.autotest.model.SuitCase" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="suitid" property="suitid" jdbcType="INTEGER" />
-    <result column="caseid" property="caseid" jdbcType="INTEGER" />
-    <result column="casename" property="casename" jdbcType="VARCHAR" />
-    <result column="requestType" property="requesttype" jdbcType="VARCHAR" />
-    <result column="requestUrl" property="requesturl" jdbcType="VARCHAR" />
-    <result column="requestHeader" property="requestheader" jdbcType="VARCHAR" />
-    <result column="requestBody" property="requestbody" jdbcType="VARCHAR" />
-    <result column="dependent" property="dependent" jdbcType="VARCHAR" />
-    <result column="requestOrder" property="requestorder" jdbcType="VARCHAR" />
-    <result column="assertExp" property="assertexp" jdbcType="VARCHAR" />
-    <result column="moduleid" property="moduleid" jdbcType="INTEGER" />
-    <result column="disable" property="disable" jdbcType="INTEGER" />
-    <result column="_timestamp" property="timestamp" jdbcType="TIMESTAMP" />
-    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
-  </resultMap>
-  <sql id="Base_Column_List" >
+<mapper namespace="com.autotest.dao.SuitCaseMapper">
+    <resultMap id="BaseResultMap" type="com.autotest.model.SuitCase">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="suitid" property="suitid" jdbcType="INTEGER"/>
+        <result column="caseid" property="caseid" jdbcType="INTEGER"/>
+        <result column="casename" property="casename" jdbcType="VARCHAR"/>
+        <result column="requestType" property="requesttype" jdbcType="VARCHAR"/>
+        <result column="requestUrl" property="requesturl" jdbcType="VARCHAR"/>
+        <result column="requestHeader" property="requestheader" jdbcType="VARCHAR"/>
+        <result column="requestBody" property="requestbody" jdbcType="VARCHAR"/>
+        <result column="dependent" property="dependent" jdbcType="VARCHAR"/>
+        <result column="requestOrder" property="requestorder" jdbcType="VARCHAR"/>
+        <result column="assertExp" property="assertexp" jdbcType="VARCHAR"/>
+        <result column="moduleid" property="moduleid" jdbcType="INTEGER"/>
+        <result column="disable" property="disable" jdbcType="INTEGER"/>
+        <result column="_timestamp" property="timestamp" jdbcType="TIMESTAMP"/>
+        <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP"/>
+        <result column="casetype" property="caseType" jdbcType="VARCHAR"/>
+        <result column="maincase" property="mainCase" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, suitid, caseid, casename, requestType, requestUrl, requestHeader, requestBody, 
-    dependent, requestOrder, assertExp, moduleid, disable, _timestamp, updatetime
+    dependent, requestOrder, assertExp, moduleid, disable,casetype,maincase, _timestamp, updatetime
   </sql>
 
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    from qa_suitcase
-    where id = #{id,jdbcType=INTEGER}
-  </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from qa_suitcase
+        where id = #{id,jdbcType=INTEGER}
+    </select>
 
-  <select id="selectBySuitID" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-    select
-    <include refid="Base_Column_List" />
-    from qa_suitcase
-    where suitid = #{suitid,jdbcType=INTEGER} order by requestOrder asc
-  </select>
+    <select id="selectBySuitID" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from qa_suitcase
+        where suitid = #{suitid,jdbcType=INTEGER} order by casetype desc ,requestOrder asc
+    </select>
 
-  <select id="selectBySuitIdCaseId" resultMap="BaseResultMap" parameterType="java.util.Map">
-    select
-    <include refid="Base_Column_List" />
-    from qa_suitcase
-    <where>
-      <if test="caseid != null">
-        AND caseid = #{caseid}
-      </if>
-      <if test="suitid != null">
-        AND suitid = #{suitid}
-      </if>
-    </where>
-  </select>
+    <select id="selectMainCaseBySuitID" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from qa_suitcase
+        where suitid = #{suitid,jdbcType=INTEGER} and casetype="MAIN" order by requestOrder asc
+    </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    <select id="selectBySuitIdCaseId" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+        from qa_suitcase
+        <where>
+            <if test="caseid != null">
+                AND caseid = #{caseid}
+            </if>
+            <if test="suitid != null">
+                AND suitid = #{suitid}
+            </if>
+        </where>
+    </select>
+    <select id="selectSubCase" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+        from qa_suitcase
+        <where>
+            maincase = #{caseid}
+        </where>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from qa_suitcase
     where id = #{id,jdbcType=INTEGER}
   </delete>
 
-  <insert id="insertSelective" parameterType="com.autotest.model.SuitCase" >
-    insert into qa_suitcase
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="suitid != null" >
-        suitid,
-      </if>
-      <if test="caseid != null" >
-        caseid,
-      </if>
-      <if test="casename != null" >
-        casename,
-      </if>
-      <if test="requesttype != null" >
-        requestType,
-      </if>
-      <if test="requesturl != null" >
-        requestUrl,
-      </if>
-      <if test="requestheader != null" >
-        requestHeader,
-      </if>
-      <if test="requestbody != null" >
-        requestBody,
-      </if>
-      <if test="dependent != null" >
-        dependent,
-      </if>
-      <if test="requestorder != null" >
-        requestOrder,
-      </if>
-      <if test="assertexp != null" >
-        assertExp,
-      </if>
-      <if test="moduleid != null" >
-        moduleid,
-      </if>
-      <if test="disable != null" >
-        disable,
-      </if>
-      <if test="timestamp != null" >
-        _timestamp,
-      </if>
-      <if test="updatetime != null" >
-        updatetime,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="suitid != null" >
-        #{suitid,jdbcType=INTEGER},
-      </if>
-      <if test="caseid != null" >
-        #{caseid,jdbcType=INTEGER},
-      </if>
-      <if test="casename != null" >
-        #{casename,jdbcType=VARCHAR},
-      </if>
-      <if test="requesttype != null" >
-        #{requesttype,jdbcType=VARCHAR},
-      </if>
-      <if test="requesturl != null" >
-        #{requesturl,jdbcType=VARCHAR},
-      </if>
-      <if test="requestheader != null" >
-        #{requestheader,jdbcType=VARCHAR},
-      </if>
-      <if test="requestbody != null" >
-        #{requestbody,jdbcType=VARCHAR},
-      </if>
-      <if test="dependent != null" >
-        #{dependent,jdbcType=VARCHAR},
-      </if>
-      <if test="requestorder != null" >
-        #{requestorder,jdbcType=VARCHAR},
-      </if>
-      <if test="assertexp != null" >
-        #{assertexp,jdbcType=VARCHAR},
-      </if>
-      <if test="moduleid != null" >
-        #{moduleid,jdbcType=INTEGER},
-      </if>
-      <if test="disable != null" >
-        #{disable,jdbcType=INTEGER},
-      </if>
-      <if test="timestamp != null" >
-        #{timestamp,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatetime != null" >
-        #{updatetime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-    <selectKey resultType="java.lang.Integer" keyProperty="id">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-  </insert>
+    <insert id="insertSelective" parameterType="com.autotest.model.SuitCase">
+        insert into qa_suitcase
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="suitid != null">
+                suitid,
+            </if>
+            <if test="caseid != null">
+                caseid,
+            </if>
+            <if test="casename != null">
+                casename,
+            </if>
+            <if test="requesttype != null">
+                requestType,
+            </if>
+            <if test="requesturl != null">
+                requestUrl,
+            </if>
+            <if test="requestheader != null">
+                requestHeader,
+            </if>
+            <if test="requestbody != null">
+                requestBody,
+            </if>
+            <if test="dependent != null">
+                dependent,
+            </if>
+            <if test="requestorder != null">
+                requestOrder,
+            </if>
+            <if test="assertexp != null">
+                assertExp,
+            </if>
+            <if test="moduleid != null">
+                moduleid,
+            </if>
+            <if test="caseType != null">
+                caseType,
+            </if>
+            <if test="mainCase != null">
+                maincase,
+            </if>
+            <if test="disable != null">
+                disable,
+            </if>
+            <if test="timestamp != null">
+                _timestamp,
+            </if>
+            <if test="updatetime != null">
+                updatetime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="suitid != null">
+                #{suitid,jdbcType=INTEGER},
+            </if>
+            <if test="caseid != null">
+                #{caseid,jdbcType=INTEGER},
+            </if>
+            <if test="casename != null">
+                #{casename,jdbcType=VARCHAR},
+            </if>
+            <if test="requesttype != null">
+                #{requesttype,jdbcType=VARCHAR},
+            </if>
+            <if test="requesturl != null">
+                #{requesturl,jdbcType=VARCHAR},
+            </if>
+            <if test="requestheader != null">
+                #{requestheader,jdbcType=VARCHAR},
+            </if>
+            <if test="requestbody != null">
+                #{requestbody,jdbcType=VARCHAR},
+            </if>
+            <if test="dependent != null">
+                #{dependent,jdbcType=VARCHAR},
+            </if>
+            <if test="requestorder != null">
+                #{requestorder,jdbcType=VARCHAR},
+            </if>
+            <if test="assertexp != null">
+                #{assertexp,jdbcType=VARCHAR},
+            </if>
+            <if test="moduleid != null">
+                #{moduleid,jdbcType=INTEGER},
+            </if>
+            <if test="caseType !=null">
+                #{caseType,jdbcType=VARCHAR},
+            </if>
+            <if test="mainCase != null">
+                #{mainCase,jdbcType=INTEGER},
+            </if>
+            <if test="disable != null">
+                #{disable,jdbcType=INTEGER},
+            </if>
+            <if test="timestamp != null">
+                #{timestamp,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatetime != null">
+                #{updatetime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+        <selectKey resultType="java.lang.Integer" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
 
-  <update id="updateByPrimaryKeySelective" parameterType="com.autotest.model.SuitCase" >
-    update qa_suitcase
-    <set >
-      <if test="suitid != null" >
-        suitid = #{suitid,jdbcType=INTEGER},
-      </if>
-      <if test="caseid != null" >
-        caseid = #{caseid,jdbcType=INTEGER},
-      </if>
-      <if test="casename != null" >
-        casename = #{casename,jdbcType=VARCHAR},
-      </if>
-      <if test="requesttype != null" >
-        requestType = #{requesttype,jdbcType=VARCHAR},
-      </if>
-      <if test="requesturl != null" >
-        requestUrl = #{requesturl,jdbcType=VARCHAR},
-      </if>
-      <if test="requestheader != null" >
-        requestHeader = #{requestheader,jdbcType=VARCHAR},
-      </if>
-      <if test="requestbody != null" >
-        requestBody = #{requestbody,jdbcType=VARCHAR},
-      </if>
-      <if test="dependent != null" >
-        dependent = #{dependent,jdbcType=VARCHAR},
-      </if>
-      <if test="requestorder != null" >
-        requestOrder = #{requestorder,jdbcType=VARCHAR},
-      </if>
-      <if test="assertexp != null" >
-        assertExp = #{assertexp,jdbcType=VARCHAR},
-      </if>
-      <if test="moduleid != null" >
-        moduleid = #{moduleid,jdbcType=INTEGER},
-      </if>
-      <if test="disable != null" >
-        disable = #{disable,jdbcType=INTEGER},
-      </if>
-      <if test="timestamp != null" >
-        _timestamp = #{timestamp,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatetime != null" >
-        updatetime = #{updatetime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.autotest.model.SuitCase">
+        update qa_suitcase
+        <set>
+            <if test="suitid != null">
+                suitid = #{suitid,jdbcType=INTEGER},
+            </if>
+            <if test="caseid != null">
+                caseid = #{caseid,jdbcType=INTEGER},
+            </if>
+            <if test="casename != null">
+                casename = #{casename,jdbcType=VARCHAR},
+            </if>
+            <if test="requesttype != null">
+                requestType = #{requesttype,jdbcType=VARCHAR},
+            </if>
+            <if test="requesturl != null">
+                requestUrl = #{requesturl,jdbcType=VARCHAR},
+            </if>
+            <if test="requestheader != null">
+                requestHeader = #{requestheader,jdbcType=VARCHAR},
+            </if>
+            <if test="requestbody != null">
+                requestBody = #{requestbody,jdbcType=VARCHAR},
+            </if>
+            <if test="dependent != null">
+                dependent = #{dependent,jdbcType=VARCHAR},
+            </if>
+            <if test="requestorder != null">
+                requestOrder = #{requestorder,jdbcType=VARCHAR},
+            </if>
+            <if test="assertexp != null">
+                assertExp = #{assertexp,jdbcType=VARCHAR},
+            </if>
+            <if test="moduleid != null">
+                moduleid = #{moduleid,jdbcType=INTEGER},
+            </if>
+            <if test="disable != null">
+                disable = #{disable,jdbcType=INTEGER},
+            </if>
+            <if test="caseType !=null">
+                caseType =#{caseType,jdbcType=VARCHAR},
+            </if>
+            <if test="mainCase !=null">
+                mainCase = #{mainCase,jdbcType=INTEGER},
+            </if>
+            <if test="timestamp != null">
+                _timestamp = #{timestamp,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatetime != null">
+                updatetime = #{updatetime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
 </mapper>

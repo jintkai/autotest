@@ -56,10 +56,10 @@ public class HttpClientServiceImpl {
                 className = "org.apache.http.client.methods.HttpPost";
                 break;
             case 3:
-                className = "org.apache.commons.httpclient.methods.DeleteMethod";
+                className = "org.apache.http.client.methods.HttpDelete";
                 break;
             default:
-                className = "org.apache.commons.httpclient.methods.GetMethod";
+                className = "org.apache.http.client.methods.HttpGet";
         }
         try {
             cls = Class.forName(className);
@@ -160,6 +160,13 @@ public class HttpClientServiceImpl {
                 LOG.error("拒绝链接...");
                 StringBuffer buffer = new StringBuffer(httpInfo.getResponseLog());
                 buffer = buffer.append("拒绝链接...");
+                httpInfo.setResponseLog(buffer.toString());
+                return httpInfo;
+            }
+            if(e.toString().contains("No route to host")){
+                LOG.error("No route to host");
+                StringBuffer buffer = new StringBuffer(httpInfo.getResponseLog());
+                buffer = buffer.append("No route to host");
                 httpInfo.setResponseLog(buffer.toString());
                 return httpInfo;
             }

@@ -77,7 +77,7 @@ public class SuitCaseServiceImpl implements SuitCaseService {
 
 
     @Override
-    public SuitCaseResult suitCaseRun(SuitCase suitCase,int buildid) {
+    public SuitCaseResult suitCaseRun(SuitCase suitCase,int buildid,boolean skip) {
         BaseResp urlRequest = new BaseResp();
         BaseResp headerRequest = new BaseResp();
         BaseResp bodyRequest = new BaseResp();
@@ -85,7 +85,33 @@ public class SuitCaseServiceImpl implements SuitCaseService {
         //拷贝用例自定义变量到每次只需的自定义result表
         variableResultService.copyVariable(suitCase.getSuitid(),buildid);
 
-        Map<String,Object> result = new HashMap<String,Object>();
+        if(skip == true){
+            SuitCaseResult suitCaseResult = new SuitCaseResult();
+            suitCaseResult.setSuitcaseid(suitCase.getId());
+            suitCaseResult.setBuildid(buildid);
+            List<SuitCaseResult> lists = suitCaseResultService.selectList(suitCaseResult);
+            suitCaseResult.setSuitid(suitCase.getSuitid());
+            suitCaseResult.setRequestHeader(headerRequest.getMsg());
+            suitCaseResult.setRequestUrl(urlRequest.getMsg());
+            suitCaseResult.setRequestBody(bodyRequest.getMsg());
+//            suitCaseResult.setResponsecode(httpInfo.getResponseCode());
+//            suitCaseResult.setResponsebody(httpInfo.getResponseBody());
+//            suitCaseResult.setResponseheader(httpInfo.getResponseHeader());
+//            suitCaseResult.setAssertlog(jsonStr);
+//            suitCaseResult.setResponsetime(Integer.valueOf(String.valueOf(httpInfo.getResponseTime())));
+//            suitCaseResult.setStatus(httpInfo.getIsSuccess());
+            suitCaseResult.setStatus(3);
+            if (lists.size() == 1){
+                suitCaseResult.setId(lists.get(0).getId());
+                suitCaseResultService.updateSuitResult(suitCaseResult);
+            }else {
+                suitCaseResultService.insertSuitResult(suitCaseResult);
+                suitCaseResult.setId(suitCaseResultService.selectSuitResult(suitCase.getId(),buildid).getId());
+            }
+            return suitCaseResult;
+        }
+
+//        Map<String,Object> result = new HashMap<String,Object>();
         Map<String,Object> urlMap = resolverServer.resolver(suitCase.getSuitid(),buildid,suitCase.getRequesturl() == null?"":suitCase.getRequesturl());
         Map<String,Object> headerMap = resolverServer.resolver(suitCase.getSuitid(),buildid,suitCase.getRequestheader() == null?"":suitCase.getRequestheader());
         Map<String,Object> bodyMap = resolverServer.resolver(suitCase.getSuitid(),buildid,suitCase.getRequestbody() == null?"":suitCase.getRequestbody());
@@ -172,12 +198,12 @@ public class SuitCaseServiceImpl implements SuitCaseService {
                 suitCaseResultService.insertSuitResult(suitCaseResult);
             }
             //判断执行用例结果；若为0，则执行失败；
-            result.put("success",success);
-            result.put("message",message);
-            result.put("urlFormat",urlRequest);
-            result.put("headerFormat",headerRequest);
-            result.put("bodyFormat",bodyRequest);
-            result.put("HHHHHH",suitCaseResult);
+//            result.put("success",success);
+//            result.put("message",message);
+//            result.put("urlFormat",urlRequest);
+//            result.put("headerFormat",headerRequest);
+//            result.put("bodyFormat",bodyRequest);
+//            result.put("HHHHHH",suitCaseResult);
             return suitCaseResult;
         }
         //解析成功，继续执行
@@ -208,11 +234,11 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             assertModels.add(httpAssert);
         }
 
-        result.put("success",success);
-        result.put("message",message);
-        result.put("urlFormat",urlRequest);
-        result.put("headerFormat",headerRequest);
-        result.put("bodyFormat",bodyRequest);
+//        result.put("success",success);
+//        result.put("message",message);
+//        result.put("urlFormat",urlRequest);
+//        result.put("headerFormat",headerRequest);
+//        result.put("bodyFormat",bodyRequest);
         /**
          * 存储结果逻辑
          */
@@ -241,9 +267,10 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             suitCaseResultService.updateSuitResult(suitCaseResult);
         }else {
             suitCaseResultService.insertSuitResult(suitCaseResult);
+            suitCaseResult.setId(suitCaseResultService.selectSuitResult(suitCase.getId(),buildid).getId());
         }
-        result.put("runLog",httpInfo);
-        result.put("HHHHHH",suitCaseResult);
+//        result.put("runLog",httpInfo);
+//        result.put("HHHHHH",suitCaseResult);
         return suitCaseResult;
     }
 

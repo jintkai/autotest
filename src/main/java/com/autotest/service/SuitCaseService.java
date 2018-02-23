@@ -13,7 +13,7 @@ public interface SuitCaseService {
     List<SuitCase> selectMainCaseBySuitID(Integer suitID);
 
 
-    SuitCaseResult suitCaseRun(SuitCase suitCase, int buildid);
+    SuitCaseResult suitCaseRun(SuitCase suitCase, int buildid,boolean skip);
 
     int deleteSuitCaseById(Integer id);
 

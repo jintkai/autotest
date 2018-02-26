@@ -1,5 +1,6 @@
 package com.autotest.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.autotest.dao.SuitCaseMapper;
 import com.autotest.model.*;
 import com.autotest.service.SuitCaseService;
@@ -30,6 +31,8 @@ public class SuitCaseServiceImpl implements SuitCaseService {
     @Autowired
     VariableResolverServerImpl resolverServer;
 
+    private int success = 1;
+
     @Override
     public SuitCase selectById(Integer id) {
         return suitCaseMapper.selectByPrimaryKey(id);
@@ -39,30 +42,31 @@ public class SuitCaseServiceImpl implements SuitCaseService {
     public List<SuitCase> selectBySuitID(Integer suitID) {
         return suitCaseMapper.selectBySuitID(suitID);
     }
+
     @Override
-    public List<SuitCase> selectMainCaseBySuitID(Integer suitID){
+    public List<SuitCase> selectMainCaseBySuitID(Integer suitID) {
         return suitCaseMapper.selectMainCaseBySuitID(suitID);
 
     }
 
     @Override
-    public int deleteSuitCaseById(Integer id){
+    public int deleteSuitCaseById(Integer id) {
         return suitCaseMapper.deleteByPrimaryKey(id);
     }
 
     @Override
-    public int insertSuitCase(SuitCase record){
+    public int insertSuitCase(SuitCase record) {
         return suitCaseMapper.insertSelective(record);
     }
 
     @Override
-    public SuitCase selectSuitCaseById(Integer id){
+    public SuitCase selectSuitCaseById(Integer id) {
         return suitCaseMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public List<SuitCase> selectBySuitIdCaseId(Integer suitid,Integer caseid){
-        return suitCaseMapper.selectBySuitIdCaseId(suitid,caseid);
+    public List<SuitCase> selectBySuitIdCaseId(Integer suitid, Integer caseid) {
+        return suitCaseMapper.selectBySuitIdCaseId(suitid, caseid);
     }
 
     @Override
@@ -71,50 +75,159 @@ public class SuitCaseServiceImpl implements SuitCaseService {
     }
 
     @Override
-    public int updateSuitCase(SuitCase record){
+    public int updateSuitCase(SuitCase record) {
         return suitCaseMapper.updateByPrimaryKeySelective(record);
     }
 
+    /**
+     * 根据result是否已经存在，判断当前是insert还是update数据；
+     *
+     * @param suitCaseResult 需要存储的suitresult信息
+     */
+    private void updateResult(SuitCaseResult suitCaseResult) {
+        List<SuitCaseResult> lists = suitCaseResultService.selectList(suitCaseResult);
+        if (lists.size() == 1) {
+            suitCaseResult.setId(lists.get(0).getId());
+            suitCaseResultService.updateSuitResult(suitCaseResult);
+        } else {
+            suitCaseResultService.insertSuitResult(suitCaseResult);
+            suitCaseResult.setId(suitCaseResultService.selectSuitResult(suitCaseResult.getSuitcaseid(), suitCaseResult.getBuildid()).getId());
+        }
+    }
+
+    /**
+     * 根据变量解析的map结果，提取map中对应的结果。解析的最终结果返回给对应的变量；
+     *
+     * @param resultMap     map中为变量解析的原始数据；
+     * @param resultRequest 存储解析的map中对应的result信息；
+     */
+    private AssertModel resolveVariable(Map resultMap, BaseResp resultRequest) {
+        AssertModel resultAssert = new AssertModel();
+        if ((Integer) resultMap.get("success") == 0) {
+            resultAssert.setSuccess(0);
+            resultAssert.setMessage((String) resultMap.get("message"));
+            success = 0;
+            resultRequest.setMsg((String) resultMap.get("message"));
+            resultRequest.setCode(500);
+        } else {
+            resultRequest.setMsg((String) resultMap.get("result"));
+            resultRequest.setCode(200);
+            resultAssert.setSuccess(1);
+        }
+        return resultAssert;
+    }
+
+    /**
+     * 根据suitcase，httpinfo信息，判断断言是否通过
+     *
+     * @param suitCase 用例信息，存储断言信息；
+     * @param httpInfo info中记录了case的运行结果。
+     * @return 用于存储断言的验证结果;
+     */
+    private AssertModel resoleveAssertExp(SuitCase suitCase, HttpInfo httpInfo) {
+        AssertModel expAssert = new AssertModel();
+        expAssert.setAssertType("assert");
+        expAssert.setSuccess(1);
+        List<AssertExpModal> assertExpModals = new ArrayList<>();
+        String assertExpStr = suitCase.getAssertexp();
+        List<Map<String, Object>> assertMapList = (List<Map<String, Object>>) JSONArray.parse(assertExpStr);
+        for (Map<String, Object> assertMap : assertMapList) {
+            assertExpModals.add(
+                    new AssertExpModal((Integer) assertMap.get("id"), (String) assertMap.get("aType"),
+                            (String) assertMap.get("variable"), (boolean) assertMap.get("negation"),
+                            (String) assertMap.get("rule"), assertMap.get("aValue").toString()));
+        }
+
+        List<Map<String, Object>> assertResults = new ArrayList<>();
+        for (AssertExpModal assertExpModal : assertExpModals) {
+            Map<String, Object> singleResult = new HashMap<>();
+            singleResult.put("id", assertExpModal.getId());
+            String type = assertExpModal.getType();
+            boolean result = false;
+            if (type.equals("code")) {
+                switch (assertExpModal.getRule()) {
+                    case "equal":
+                        if (assertExpModal.getValue().equals(httpInfo.getResponseCode())) {
+                            result = true;
+                        }
+                        break;
+                    case "unequal":
+                        if (!assertExpModal.getValue().equals(httpInfo.getResponseCode())) {
+                            result = true;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                singleResult.put("message", "Status Code:" + httpInfo.getResponseCode());
+                if (assertExpModal.isNegation()) {
+                    result = !result;
+                }
+            } else if (type.equals("spendTime")) {
+                switch (assertExpModal.getRule()) {
+                    case "equal":
+                        if (Long.valueOf(assertExpModal.getValue()) == httpInfo.getResponseTime()) {
+                            result = true;
+                        }
+                        break;
+                    case "unequal":
+                        if (Long.valueOf(assertExpModal.getValue()) != httpInfo.getResponseTime()) {
+                            result = true;
+                        }
+                        break;
+                    case "less":
+                        if (Long.valueOf(assertExpModal.getValue()) > httpInfo.getResponseTime()) {
+                            result = true;
+                        }
+                        break;
+                    case "greater":
+                        if (Long.valueOf(assertExpModal.getValue()) < httpInfo.getResponseTime()) {
+                            result = true;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                singleResult.put("message", "Spend Time:" + httpInfo.getResponseTime());
+
+            }
+
+            if (result == false) {
+                singleResult.put("success", 0);
+                expAssert.setSuccess(0);
+                httpInfo.setIsSuccess(2);
+            } else {
+                singleResult.put("success", 1);
+            }
+            assertResults.add(singleResult);
+            expAssert.setMessage(assertResults);
+        }
+        return expAssert;
+    }
 
     @Override
-    public SuitCaseResult suitCaseRun(SuitCase suitCase,int buildid,boolean skip) {
+    public SuitCaseResult suitCaseRun(SuitCase suitCase, int buildid, boolean skip) {
         BaseResp urlRequest = new BaseResp();
         BaseResp headerRequest = new BaseResp();
         BaseResp bodyRequest = new BaseResp();
-
         //拷贝用例自定义变量到每次只需的自定义result表
-        variableResultService.copyVariable(suitCase.getSuitid(),buildid);
-
-        if(skip == true){
+        variableResultService.copyVariable(suitCase.getSuitid(), buildid);
+        if (skip == true) {
             SuitCaseResult suitCaseResult = new SuitCaseResult();
             suitCaseResult.setSuitcaseid(suitCase.getId());
             suitCaseResult.setBuildid(buildid);
-            List<SuitCaseResult> lists = suitCaseResultService.selectList(suitCaseResult);
             suitCaseResult.setSuitid(suitCase.getSuitid());
             suitCaseResult.setRequestHeader(headerRequest.getMsg());
             suitCaseResult.setRequestUrl(urlRequest.getMsg());
             suitCaseResult.setRequestBody(bodyRequest.getMsg());
-//            suitCaseResult.setResponsecode(httpInfo.getResponseCode());
-//            suitCaseResult.setResponsebody(httpInfo.getResponseBody());
-//            suitCaseResult.setResponseheader(httpInfo.getResponseHeader());
-//            suitCaseResult.setAssertlog(jsonStr);
-//            suitCaseResult.setResponsetime(Integer.valueOf(String.valueOf(httpInfo.getResponseTime())));
-//            suitCaseResult.setStatus(httpInfo.getIsSuccess());
             suitCaseResult.setStatus(3);
-            if (lists.size() == 1){
-                suitCaseResult.setId(lists.get(0).getId());
-                suitCaseResultService.updateSuitResult(suitCaseResult);
-            }else {
-                suitCaseResultService.insertSuitResult(suitCaseResult);
-                suitCaseResult.setId(suitCaseResultService.selectSuitResult(suitCase.getId(),buildid).getId());
-            }
+            updateResult(suitCaseResult);
             return suitCaseResult;
         }
 
-//        Map<String,Object> result = new HashMap<String,Object>();
-        Map<String,Object> urlMap = resolverServer.resolver(suitCase.getSuitid(),buildid,suitCase.getRequesturl() == null?"":suitCase.getRequesturl());
-        Map<String,Object> headerMap = resolverServer.resolver(suitCase.getSuitid(),buildid,suitCase.getRequestheader() == null?"":suitCase.getRequestheader());
-        Map<String,Object> bodyMap = resolverServer.resolver(suitCase.getSuitid(),buildid,suitCase.getRequestbody() == null?"":suitCase.getRequestbody());
+        Map<String, Object> urlMap = resolverServer.resolver(suitCase.getSuitid(), buildid, suitCase.getRequesturl() == null ? "" : suitCase.getRequesturl());
+        Map<String, Object> headerMap = resolverServer.resolver(suitCase.getSuitid(), buildid, suitCase.getRequestheader() == null ? "" : suitCase.getRequestheader());
+        Map<String, Object> bodyMap = resolverServer.resolver(suitCase.getSuitid(), buildid, suitCase.getRequestbody() == null ? "" : suitCase.getRequestbody());
         String message = "";
         int success = 1;
         List<AssertModel> assertModels = new ArrayList<>();
@@ -122,57 +235,25 @@ public class SuitCaseServiceImpl implements SuitCaseService {
         AssertModel urlAssert = new AssertModel();
         AssertModel headerAssert = new AssertModel();
         AssertModel bodyAssert = new AssertModel();
+
+
+        urlAssert = resolveVariable(urlMap, urlRequest);
+        headerAssert = resolveVariable(headerMap, headerRequest);
+        bodyAssert = resolveVariable(bodyMap, bodyRequest);
         urlAssert.setAssertType("url");
         headerAssert.setAssertType("header");
         bodyAssert.setAssertType("body");
 
-        if ((Integer) urlMap.get("success") == 0 ) {
-            urlAssert.setSuccess(0);
-            urlAssert.setMessage((String ) urlMap.get("message"));
-            success = 0;
-            urlRequest.setMsg( (String ) urlMap.get("message"));
-            urlRequest.setCode(500);
-        }else{
-            urlRequest.setMsg( (String ) urlMap.get("result"));
-            urlRequest.setCode(200);
-            urlAssert.setSuccess(1);
+        if (success == 0) {
+            message = "Case解析变量失败!";
         }
-
-        if ((Integer) headerMap.get("success")  == 0){
-            headerAssert.setSuccess(0);
-            headerAssert.setMessage((String ) headerMap.get("message"));
-            success = 0;
-            headerRequest.setMsg((String )headerMap.get("message"));
-            headerRequest.setCode(500);
-        }else{
-            headerRequest.setMsg( (String ) headerMap.get("result"));
-            headerRequest.setCode(200);
-            headerAssert.setSuccess(1);
-        }
-
-        if ((Integer) bodyMap.get("success")  == 0){
-            bodyAssert.setSuccess(0);
-            bodyAssert.setMessage((String ) bodyMap.get("message"));
-            success = 0;
-            bodyRequest.setMsg((String )bodyMap.get("message"));
-            bodyRequest.setCode(500);
-        }else{
-            bodyRequest.setMsg( (String ) bodyMap.get("result"));
-            bodyRequest.setCode(200);
-            bodyAssert.setSuccess(1);
-        }
-
-        if(success == 0){
-            message ="Case解析错误!";
-        }
-
         assertModels.add(urlAssert);
         assertModels.add(headerAssert);
         assertModels.add(bodyAssert);
 
         SuitCaseResult suitCaseResult = new SuitCaseResult();
         //参数解析失败，直接退出程序。保存执行结果
-        if (success == 0){
+        if (success == 0) {
             suitCaseResult.setResponsecode("");
             ObjectMapper mapper = new ObjectMapper();
             String jsonStr = "";
@@ -181,7 +262,6 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-
             suitCaseResult.setAssertlog(jsonStr);
             suitCaseResult.setSuitcaseid(suitCase.getId());
             suitCaseResult.setBuildid(buildid);
@@ -191,28 +271,20 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             List<SuitCaseResult> lists = suitCaseResultService.selectList(suitCaseResult);
             suitCaseResult.setSuitid(suitCase.getSuitid());
             suitCaseResult.setStatus(0);
-            if (lists.size() == 1){
+            if (lists.size() == 1) {
                 suitCaseResult.setId(lists.get(0).getId());
                 suitCaseResultService.updateSuitResult(suitCaseResult);
-            }else {
+            } else {
                 suitCaseResultService.insertSuitResult(suitCaseResult);
             }
-            //判断执行用例结果；若为0，则执行失败；
-//            result.put("success",success);
-//            result.put("message",message);
-//            result.put("urlFormat",urlRequest);
-//            result.put("headerFormat",headerRequest);
-//            result.put("bodyFormat",bodyRequest);
-//            result.put("HHHHHH",suitCaseResult);
             return suitCaseResult;
         }
         //解析成功，继续执行
         HttpInfo httpInfo = new HttpInfo();
-
         httpInfo = httpClientService.sentRequest(Integer.valueOf(suitCase.getRequesttype()), (String) urlMap.get("result"), suitCase.getRequestheader(), (String) bodyMap.get("result"));
         //发送请求后，根据caseid，实例化参数；
 
-        if (httpInfo.getIsSuccess() ==1 ) {
+        if (httpInfo.getIsSuccess() == 1) {
             /**
              * 变量解析逻辑,变量不与case绑定，与suit绑定
              */
@@ -223,9 +295,12 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             /**
              * 断言逻辑，断言解析，断言判断
              */
-        }else{
+            AssertModel expAssert = resoleveAssertExp(suitCase, httpInfo);
+            assertModels.add(expAssert);
+
+        } else {
             //http执行失败
-            success = 0 ;
+            success = 0;
             message = httpInfo.getResponseLog();
             AssertModel httpAssert = new AssertModel();
             httpAssert.setAssertType("http");
@@ -234,11 +309,6 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             assertModels.add(httpAssert);
         }
 
-//        result.put("success",success);
-//        result.put("message",message);
-//        result.put("urlFormat",urlRequest);
-//        result.put("headerFormat",headerRequest);
-//        result.put("bodyFormat",bodyRequest);
         /**
          * 存储结果逻辑
          */
@@ -251,7 +321,6 @@ public class SuitCaseServiceImpl implements SuitCaseService {
         }
         suitCaseResult.setSuitcaseid(suitCase.getId());
         suitCaseResult.setBuildid(buildid);
-        List<SuitCaseResult> lists = suitCaseResultService.selectList(suitCaseResult);
         suitCaseResult.setSuitid(suitCase.getSuitid());
         suitCaseResult.setRequestHeader(headerRequest.getMsg());
         suitCaseResult.setRequestUrl(urlRequest.getMsg());
@@ -262,15 +331,7 @@ public class SuitCaseServiceImpl implements SuitCaseService {
         suitCaseResult.setAssertlog(jsonStr);
         suitCaseResult.setResponsetime(Integer.valueOf(String.valueOf(httpInfo.getResponseTime())));
         suitCaseResult.setStatus(httpInfo.getIsSuccess());
-        if (lists.size() == 1){
-            suitCaseResult.setId(lists.get(0).getId());
-            suitCaseResultService.updateSuitResult(suitCaseResult);
-        }else {
-            suitCaseResultService.insertSuitResult(suitCaseResult);
-            suitCaseResult.setId(suitCaseResultService.selectSuitResult(suitCase.getId(),buildid).getId());
-        }
-//        result.put("runLog",httpInfo);
-//        result.put("HHHHHH",suitCaseResult);
+        updateResult(suitCaseResult);
         return suitCaseResult;
     }
 

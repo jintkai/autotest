@@ -94,7 +94,6 @@ public class SuitCaseAction {
     @RequestMapping(value = "/runGroup", method = RequestMethod.POST)
     public BaseResp runGroup(Integer id, Integer buildid) {
         BaseResp baseResp = new BaseResp();
-
         int perStatus = 1, mainStatus = 1, postStatus = 1;
         List<SuitCase> subCases = suitCaseService.selectSubCase(id);
         List<SuitCase> perCases = new ArrayList<>();
@@ -115,7 +114,8 @@ public class SuitCaseAction {
                 perStatus = 0;
             }
         }
-        mainResult = suitCaseService.suitCaseRun(suitCaseService.selectSuitCaseById(id), buildid, skip);
+        SuitCase mainCase = suitCaseService.selectSuitCaseById(id);
+        mainResult = suitCaseService.suitCaseRun(mainCase, buildid, skip);
         if (mainResult.getStatus() != 1) {
             mainStatus = 0;
             skip = true;
@@ -128,12 +128,17 @@ public class SuitCaseAction {
             }
         }
         if (postStatus == 0){
-            //更新状态
-            mainResult.setStatus(3);
+            mainResult.setStatus(3);//后置请求失败，更新主请求状态
             suitCaseResultService.updateSuitResult(mainResult);
         }
 
-        //suitCaseService.selectSubCase(id);
+        baseResp.setCode(200);
+        Map<String,Object> map = new HashMap<>();
+        map.put("mainCase",mainCase);
+        map.put("mainStatus", mainStatus);
+        map.put("perStatus", perStatus);
+        map.put("postStatus",postStatus);
+        baseResp.setData(map);
         return baseResp;
     }
 
@@ -162,10 +167,11 @@ public class SuitCaseAction {
 
         Map<String, Object> resultMap = new HashMap<String, Object>();
         List<SuitCase> lists = suitCaseService.selectMainCaseBySuitID(id);
+        List<Object> results = new ArrayList<>();
         for (SuitCase suitCase : lists) {
-            runGroup(suitCase.getId(), buildid);
+            results.add(runGroup(suitCase.getId(), buildid));
         }
-        resultMap.put("result", lists);
+        resultMap.put("result", results);
         if (!debug) {
             Suit suit = new Suit();
             suit.setSuitid(id);
@@ -178,6 +184,7 @@ public class SuitCaseAction {
         return baseResp;
     }
 
+    /*
     @RequestMapping(value = "/runsuit", method = RequestMethod.POST)
     public BaseResp runSuit(Integer id, Integer buildid, boolean debug) {
         BaseResp baseResp = new BaseResp();
@@ -217,7 +224,7 @@ public class SuitCaseAction {
         baseResp.setData(resultMap);
         return baseResp;
     }
-
+*/
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public BaseResp deleteSuitCaseById(Integer id) {

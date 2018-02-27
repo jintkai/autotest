@@ -33,6 +33,16 @@ public class SuitCaseResult {
 
     private Date updatetime;
 
+    private String assertExp;
+
+    public String getAssertExp() {
+        return assertExp;
+    }
+
+    public void setAssertExp(String assertExp) {
+        this.assertExp = assertExp;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -136,7 +136,6 @@ public class HttpClientServiceImpl {
             Date begin = new Date();
             response = httpClient.execute(method);
             responseEntity = response.getEntity();
-
             if (response.getStatusLine().getStatusCode() >= 400) {
                 httpInfo.setIsSuccess(0);
                 httpInfo.setResponseTime(0L);

@@ -1,5 +1,6 @@
 package com.autotest.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.autotest.dao.SuitCaseMapper;
 import com.autotest.model.*;
@@ -124,14 +125,14 @@ public class SuitCaseServiceImpl implements SuitCaseService {
      * @param httpInfo info中记录了case的运行结果。
      * @return 用于存储断言的验证结果;
      */
-    private AssertModel resoleveAssertExp(SuitCase suitCase, HttpInfo httpInfo) {
-        AssertModel expAssert = new AssertModel();
+    private  List<AssertExpModal> resoleveAssertExp(AssertModel expAssert, SuitCase suitCase, HttpInfo httpInfo) {
         expAssert.setAssertType("assert");
         expAssert.setSuccess(1);
         List<AssertExpModal> assertExpModals = new ArrayList<>();
         String assertExpStr = suitCase.getAssertexp();
-        List<Map<String, Object>> assertMapList = (List<Map<String, Object>>) JSONArray.parse(assertExpStr);
-        for (Map<String, Object> assertMap : assertMapList) {
+        List<Map<String, Object>> assertMapList = (List<Map<String, Object>>) JSONArray.parse(assertExpStr.equals("")?"[]":assertExpStr);
+        for(int i =0;i<assertMapList.size();i++){
+            Map<String, Object> assertMap=assertMapList.get(i);
             assertExpModals.add(
                     new AssertExpModal((Integer) assertMap.get("id"), (String) assertMap.get("aType"),
                             (String) assertMap.get("variable"), (boolean) assertMap.get("negation"),
@@ -159,7 +160,7 @@ public class SuitCaseServiceImpl implements SuitCaseService {
                     default:
                         break;
                 }
-                singleResult.put("message", "Status Code:" + httpInfo.getResponseCode());
+                singleResult.put("message", httpInfo.getResponseCode());
                 if (assertExpModal.isNegation()) {
                     result = !result;
                 }
@@ -188,8 +189,29 @@ public class SuitCaseServiceImpl implements SuitCaseService {
                     default:
                         break;
                 }
-                singleResult.put("message", "Spend Time:" + httpInfo.getResponseTime());
-
+                singleResult.put("message",httpInfo.getResponseTime());
+                if (assertExpModal.isNegation()) {
+                    result = !result;
+                }
+            }else if( type.equals("responseBody")){
+                switch (assertExpModal.getRule()) {
+                    case "equal":
+                        if (assertExpModal.getValue().equals(httpInfo.getResponseBody())) {
+                            result = true;
+                        }
+                        break;
+                    case "contain":
+                        if (httpInfo.getResponseBody().contains(assertExpModal.getValue())) {
+                            result = true;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                singleResult.put("message", httpInfo.getResponseBody());
+                if (assertExpModal.isNegation()) {
+                    result = !result;
+                }
             }
 
             if (result == false) {
@@ -200,9 +222,10 @@ public class SuitCaseServiceImpl implements SuitCaseService {
                 singleResult.put("success", 1);
             }
             assertResults.add(singleResult);
+            assertExpModal.setResult(singleResult);
             expAssert.setMessage(assertResults);
         }
-        return expAssert;
+        return assertExpModals;
     }
 
     @Override
@@ -210,6 +233,7 @@ public class SuitCaseServiceImpl implements SuitCaseService {
         BaseResp urlRequest = new BaseResp();
         BaseResp headerRequest = new BaseResp();
         BaseResp bodyRequest = new BaseResp();
+        List<AssertExpModal> assertExpModals = new ArrayList<>();
         //拷贝用例自定义变量到每次只需的自定义result表
         variableResultService.copyVariable(suitCase.getSuitid(), buildid);
         if (skip == true) {
@@ -295,7 +319,8 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             /**
              * 断言逻辑，断言解析，断言判断
              */
-            AssertModel expAssert = resoleveAssertExp(suitCase, httpInfo);
+            AssertModel expAssert =new AssertModel() ;
+            assertExpModals = resoleveAssertExp(expAssert,suitCase, httpInfo);
             assertModels.add(expAssert);
 
         } else {
@@ -331,6 +356,11 @@ public class SuitCaseServiceImpl implements SuitCaseService {
         suitCaseResult.setAssertlog(jsonStr);
         suitCaseResult.setResponsetime(Integer.valueOf(String.valueOf(httpInfo.getResponseTime())));
         suitCaseResult.setStatus(httpInfo.getIsSuccess());
+        if(assertExpModals.isEmpty()){
+            suitCaseResult.setAssertExp("[]");
+        }else{
+            suitCaseResult.setAssertExp(JSON.toJSONString(assertExpModals));
+        }
         updateResult(suitCaseResult);
         return suitCaseResult;
     }

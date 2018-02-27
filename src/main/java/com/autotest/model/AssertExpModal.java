@@ -8,6 +8,16 @@ public class AssertExpModal {
     private String rule;
     private String value;
 
+    private Object result;
+
+    public Object getResult() {
+        return result;
+    }
+
+    public void setResult(Object result) {
+        this.result = result;
+    }
+
     public AssertExpModal(int id, String type, String variable, boolean negation, String rule, String value) {
         this.id = id;
         this.type = type;

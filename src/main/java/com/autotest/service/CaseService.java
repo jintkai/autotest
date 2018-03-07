@@ -18,4 +18,5 @@ public interface CaseService {
     int updateCase(Case record);
 
     List<Case> selectCasesByCaseName(String casename);
+    int caseCount(Integer time);
 }

@@ -20,9 +20,9 @@
         <result column="assertExp" property="assertExp" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, suitcaseid, suitid, buildid, responseHeader, responseBody, responseCode, responseTime, 
-    assertLog, status, _timestamp, updatetime,requestUrl,requestHeader,requestBody,assertExp
-  </sql>
+        id, suitcaseid, suitid, buildid, responseHeader, responseBody, responseCode, responseTime,
+        assertLog, status, _timestamp, updatetime,requestUrl,requestHeader,requestBody,assertExp
+    </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
@@ -75,22 +75,22 @@
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from qa_suitcase_result
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
+        delete from qa_suitcase_result
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
     <insert id="insert" parameterType="com.autotest.model.SuitCaseResult">
-    insert into qa_suitcase_result (id, suitcaseid, suitid, 
-      buildid, responseHeader, responseBody, 
-      responseCode, responseTime, assertLog, 
-      status, _timestamp, updatetime,requestHeader,requestUrl,requestBody,assertExp
-      )
-    values (#{id,jdbcType=INTEGER}, #{suitcaseid,jdbcType=INTEGER}, #{suitid,jdbcType=INTEGER}, 
-      #{buildid,jdbcType=INTEGER}, #{responseheader,jdbcType=VARCHAR}, #{responsebody,jdbcType=VARCHAR}, 
-      #{responsecode,jdbcType=VARCHAR}, #{responsetime,jdbcType=INTEGER}, #{assertlog,jdbcType=VARCHAR}, 
-      #{status,jdbcType=INTEGER}, now(), #{updatetime,jdbcType=TIMESTAMP},#{requestHeader,jdbcType=VARCHAR},
-      #{requestUrl,jdbcType=VARCHAR},#{requestBody,jdbcType=VARCHAR},#{assertExp,jdbcType=VARCHAR}
-      )
-  </insert>
+        insert into qa_suitcase_result (id, suitcaseid, suitid,
+        buildid, responseHeader, responseBody,
+        responseCode, responseTime, assertLog,
+        status, _timestamp, updatetime,requestHeader,requestUrl,requestBody,assertExp
+        )
+        values (#{id,jdbcType=INTEGER}, #{suitcaseid,jdbcType=INTEGER}, #{suitid,jdbcType=INTEGER},
+        #{buildid,jdbcType=INTEGER}, #{responseheader,jdbcType=VARCHAR}, #{responsebody,jdbcType=VARCHAR},
+        #{responsecode,jdbcType=VARCHAR}, #{responsetime,jdbcType=INTEGER}, #{assertlog,jdbcType=VARCHAR},
+        #{status,jdbcType=INTEGER}, now(), #{updatetime,jdbcType=TIMESTAMP},#{requestHeader,jdbcType=VARCHAR},
+        #{requestUrl,jdbcType=VARCHAR},#{requestBody,jdbcType=VARCHAR},#{assertExp,jdbcType=VARCHAR}
+        )
+    </insert>
     <insert id="insertSelective" parameterType="com.autotest.model.SuitCaseResult">
         insert into qa_suitcase_result
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -244,19 +244,23 @@
         where id = #{id,jdbcType=INTEGER}
     </update>
     <update id="updateByPrimaryKey" parameterType="com.autotest.model.SuitCaseResult">
-    update qa_suitcase_result
-    set suitcaseid = #{suitcaseid,jdbcType=INTEGER},
-      suitid = #{suitid,jdbcType=INTEGER},
-      buildid = #{buildid,jdbcType=INTEGER},
-      responseHeader = #{responseheader,jdbcType=VARCHAR},
-      responseBody = #{responsebody,jdbcType=VARCHAR},
-      responseCode = #{responsecode,jdbcType=VARCHAR},
-      responseTime = #{responsetime,jdbcType=INTEGER},
-      assertLog = #{assertlog,jdbcType=VARCHAR},
-      status = #{status,jdbcType=INTEGER},
-      _timestamp = #{timestamp,jdbcType=TIMESTAMP},
-      assertExp=#{assertExp,jdbcType=VARCHAR},
-      updatetime = #{updatetime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+        update qa_suitcase_result
+        set suitcaseid = #{suitcaseid,jdbcType=INTEGER},
+        suitid = #{suitid,jdbcType=INTEGER},
+        buildid = #{buildid,jdbcType=INTEGER},
+        responseHeader = #{responseheader,jdbcType=VARCHAR},
+        responseBody = #{responsebody,jdbcType=VARCHAR},
+        responseCode = #{responsecode,jdbcType=VARCHAR},
+        responseTime = #{responsetime,jdbcType=INTEGER},
+        assertLog = #{assertlog,jdbcType=VARCHAR},
+        status = #{status,jdbcType=INTEGER},
+        _timestamp = #{timestamp,jdbcType=TIMESTAMP},
+        assertExp=#{assertExp,jdbcType=VARCHAR},
+        updatetime = #{updatetime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="countCase" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from qa_suitcase
+    </select>
 </mapper>

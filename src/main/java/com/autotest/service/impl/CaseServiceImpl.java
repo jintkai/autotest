@@ -41,4 +41,9 @@ public class CaseServiceImpl implements CaseService{
     public List<Case> selectCasesByCaseName(String casename){
         return caseMapper.selectByCaseName(casename);
     }
+
+    @Override
+    public int caseCount(Integer time) {
+        return   caseMapper.countCase(time);
+    }
 }

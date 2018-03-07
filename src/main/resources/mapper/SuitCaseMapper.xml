@@ -11,7 +11,7 @@
         <result column="requestHeader" property="requestheader" jdbcType="VARCHAR"/>
         <result column="requestBody" property="requestbody" jdbcType="VARCHAR"/>
         <result column="dependent" property="dependent" jdbcType="VARCHAR"/>
-        <result column="requestOrder" property="requestorder" jdbcType="VARCHAR"/>
+        <result column="requestOrder" property="requestorder" jdbcType="INTEGER"/>
         <result column="assertExp" property="assertexp" jdbcType="VARCHAR"/>
         <result column="moduleid" property="moduleid" jdbcType="INTEGER"/>
         <result column="disable" property="disable" jdbcType="INTEGER"/>
@@ -39,6 +39,11 @@
         where suitid = #{suitid,jdbcType=INTEGER} order by casetype desc ,requestOrder asc
     </select>
 
+    <select id="countCase" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select count(1) from qa_suitcase
+        where UNIX_TIMESTAMP(_timestamp)>=#{time,jdbcType=BIGINT}
+    </select>
+
     <select id="selectMainCaseBySuitID" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
@@ -64,7 +69,7 @@
         <include refid="Base_Column_List"/>
         from qa_suitcase
         <where>
-            maincase = #{caseid}  order by casetype desc ,requestOrder asc
+            maincase = #{caseid} order by casetype desc ,requestOrder asc
         </where>
     </select>
 
@@ -151,7 +156,7 @@
                 #{dependent,jdbcType=VARCHAR},
             </if>
             <if test="requestorder != null">
-                #{requestorder,jdbcType=VARCHAR},
+                #{requestorder,jdbcType=INTEGER},
             </if>
             <if test="assertexp != null">
                 #{assertexp,jdbcType=VARCHAR},
@@ -208,7 +213,7 @@
                 dependent = #{dependent,jdbcType=VARCHAR},
             </if>
             <if test="requestorder != null">
-                requestOrder = #{requestorder,jdbcType=VARCHAR},
+                requestOrder = #{requestorder,jdbcType=INTEGER},
             </if>
             <if test="assertexp != null">
                 assertExp = #{assertexp,jdbcType=VARCHAR},

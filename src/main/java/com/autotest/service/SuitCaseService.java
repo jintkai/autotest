@@ -29,5 +29,7 @@ public interface SuitCaseService {
 
     int updateSuitCase(SuitCase record);
 
+    int countCaseByTime(Long time);
+
 
 }

@@ -80,6 +80,11 @@ public class SuitCaseServiceImpl implements SuitCaseService {
         return suitCaseMapper.updateByPrimaryKeySelective(record);
     }
 
+    @Override
+    public int countCaseByTime(Long time) {
+        return suitCaseMapper.countCase(time);
+    }
+
     /**
      * 根据result是否已经存在，判断当前是insert还是update数据；
      *

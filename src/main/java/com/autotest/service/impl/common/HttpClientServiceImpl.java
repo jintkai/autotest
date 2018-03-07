@@ -25,11 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 
-import javax.print.URIException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 
 @Service

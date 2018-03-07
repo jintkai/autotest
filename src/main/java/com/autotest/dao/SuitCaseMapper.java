@@ -24,5 +24,7 @@ public interface SuitCaseMapper {
 
     List<SuitCase> selectSubCase(Integer caseid);
 
+    int countCase(Long time);
+
 
 }

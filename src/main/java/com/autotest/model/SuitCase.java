@@ -1,5 +1,6 @@
 package com.autotest.model;
 
+import java.sql.Time;
 import java.util.Date;
 
 public class SuitCase {
@@ -36,6 +37,8 @@ public class SuitCase {
     private String caseType;
 
     private Integer mainCase;
+
+
 
     public Integer getId() {
         return id;

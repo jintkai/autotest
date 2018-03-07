@@ -1,92 +1,112 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.autotest.dao.SuitMapper" >
-  <resultMap id="BaseResultMap" type="com.autotest.model.Suit" >
-    <id column="suitid" property="suitid" jdbcType="INTEGER" />
-    <result column="suitName" property="suitname" jdbcType="VARCHAR" />
-    <result column="lastbuildid" property="lastbuildid" jdbcType="INTEGER" />
-    <result column="status" property="status" jdbcType="INTEGER" />
-    <result column="_timestamp" property="timestamp" jdbcType="TIMESTAMP" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    suitid, suitName, lastbuildid, status, _timestamp
+<mapper namespace="com.autotest.dao.SuitMapper">
+    <resultMap id="BaseResultMap" type="com.autotest.model.Suit">
+        <id column="suitid" property="suitid" jdbcType="INTEGER"/>
+        <result column="suitName" property="suitname" jdbcType="VARCHAR"/>
+        <result column="lastbuildid" property="lastbuildid" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="_timestamp" property="timestamp" jdbcType="TIMESTAMP"/>
+        <result column="cycletime" property ="cycletime" jdbcType="TIME" />
+        <result column="email" property="email" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="Base_Column_List">
+    suitid, suitName, lastbuildid, status,cycletime,email, _timestamp
   </sql>
 
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select
-    <include refid="Base_Column_List" />
-    from qa_suit
-    where suitid = #{suitid,jdbcType=INTEGER}
-  </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from qa_suit
+        where suitid = #{suitid,jdbcType=INTEGER}
+    </select>
 
-  <select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select
-    <include refid="Base_Column_List" />
-    from qa_suit
-    where suitName = #{suitname,jdbcType=VARCHAR}
-  </select>
-  <select id="selectSuitList" resultMap="BaseResultMap">
-    SELECT
-    <include refid="Base_Column_List" />
-    from qa_suit
-  </select>
+    <select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from qa_suit
+        where suitName = #{suitname,jdbcType=VARCHAR}
+    </select>
+    <select id="selectSuitList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from qa_suit
+    </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    <select id="countSuit" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    select count(1) from qa_suit
+    where UNIX_TIMESTAMP(_timestamp)>=#{time,jdbcType=BIGINT}
+  </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from qa_suit
     where suitid = #{suitid,jdbcType=INTEGER}
   </delete>
 
-  <insert id="insertSelective" parameterType="com.autotest.model.Suit" >
-    insert into qa_suit
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="suitname != null" >
-        suitName,
-      </if>
-      <if test="lastbuildid != null" >
-        lastbuildid,
-      </if>
-      <if test="status != null" >
-        status,
-      </if>
-      <if test="timestamp != null" >
-        _timestamp,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="suitname != null" >
-        #{suitname,jdbcType=VARCHAR},
-      </if>
-      <if test="lastbuildid != null" >
-        #{lastbuildid,jdbcType=INTEGER},
-      </if>
-      <if test="status != null" >
-        #{status,jdbcType=INTEGER},
-      </if>
-      <if test="timestamp != null" >
-        #{timestamp,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-    <selectKey resultType="java.lang.Integer" keyProperty="suitid">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-  </insert>
+    <insert id="insertSelective" parameterType="com.autotest.model.Suit">
+        insert into qa_suit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="suitname != null">
+                suitName,
+            </if>
+            <if test="lastbuildid != null">
+                lastbuildid,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="email !=null">
+                email,
+            </if>
+            <if test="cycletime !=null">
+                cycletime,
+            </if>
+                _timestamp,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="suitname != null">
+                #{suitname,jdbcType=VARCHAR},
+            </if>
+            <if test="lastbuildid != null">
+                #{lastbuildid,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="email !=null">
+                #{email,jdbcType=INTEGER},
+            </if>
+            <if test="cycletime !=null">
+                #{cycletime,jdbcType=TIME},
+            </if>
+            now(),
+        </trim>
+        <selectKey resultType="java.lang.Integer" keyProperty="suitid">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
 
-  <update id="updateByPrimaryKeySelective" parameterType="com.autotest.model.Suit" >
-    update qa_suit
-    <set >
-      <if test="suitname != null" >
-        suitName = #{suitname,jdbcType=VARCHAR},
-      </if>
-      <if test="lastbuildid != null" >
-        lastbuildid = #{lastbuildid,jdbcType=INTEGER},
-      </if>
-      <if test="status != null" >
-        status = #{status,jdbcType=INTEGER},
-      </if>
-      <if test="timestamp != null" >
-        _timestamp = #{timestamp,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where suitid = #{suitid,jdbcType=INTEGER}
-  </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.autotest.model.Suit">
+        update qa_suit
+        <set>
+            <if test="suitname != null">
+                suitName = #{suitname,jdbcType=VARCHAR},
+            </if>
+            <if test="lastbuildid != null">
+                lastbuildid = #{lastbuildid,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="timestamp != null">
+                _timestamp = #{timestamp,jdbcType=TIMESTAMP},
+            </if>
+            <if test="email !=null">
+                email = #{email,jdbcType=INTEGER},
+            </if>
+            <if test="cycletime != null">
+                cycletime = #{cycletime,jdbcType=TIME}
+            </if>
+        </set>
+        where suitid = #{suitid,jdbcType=INTEGER}
+    </update>
 </mapper>

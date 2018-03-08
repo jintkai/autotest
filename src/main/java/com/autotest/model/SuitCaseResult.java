@@ -6,7 +6,7 @@ public class SuitCaseResult {
     private Integer id;
 
     private Integer suitcaseid;
-
+    private String casename;
     private Integer suitid;
 
     private Integer buildid;
@@ -34,6 +34,32 @@ public class SuitCaseResult {
     private Date updatetime;
 
     private String assertExp;
+    private String casetype;
+    private Integer maincase;
+
+    public String getCasename() {
+        return casename;
+    }
+
+    public void setCasename(String casename) {
+        this.casename = casename;
+    }
+
+    public String getCasetype() {
+        return casetype;
+    }
+
+    public void setCasetype(String casetype) {
+        this.casetype = casetype;
+    }
+
+    public Integer getMaincase() {
+        return maincase;
+    }
+
+    public void setMaincase(Integer maincase) {
+        this.maincase = maincase;
+    }
 
     public String getAssertExp() {
         return assertExp;

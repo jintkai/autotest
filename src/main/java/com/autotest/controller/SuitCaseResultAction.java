@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ying.zhang on 17/10/15.
@@ -67,6 +69,18 @@ public class SuitCaseResultAction {
         return baseResp;
     }
 
+    @RequestMapping(value="/getByType",method = RequestMethod.POST)
+    public BaseResp getTypeSuitResult(Integer suitcaseid,Integer buildid){
+        BaseResp baseResp = new BaseResp();
+        List<SuitCaseResult> preResults = suitCaseResultService.selectByType(suitcaseid,buildid,"PREFIX");
+        List<SuitCaseResult> postResults = suitCaseResultService.selectByType(suitcaseid,buildid,"POSTFIX");
+        Map<String,Object> map =new HashMap<>();
+        map.put("preResults",preResults);
+        map.put("postResults",postResults);
+        baseResp.setCode(200);
+        baseResp.setData(map);
+        return baseResp;
+    }
 
 
 }

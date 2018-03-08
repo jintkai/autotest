@@ -21,4 +21,6 @@ public interface SuitCaseResultService {
 
     SuitCaseResult selectSuitResult(Integer suitcaseid,Integer buildid);
 
+    List<SuitCaseResult> selectByType(Integer suitcaseid,Integer buildid,String type);
+
 }

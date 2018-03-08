@@ -19,9 +19,13 @@ public interface SuitCaseResultMapper {
     int updateByPrimaryKeySelective(SuitCaseResult record);
 
     int updateByPrimaryKey(SuitCaseResult record);
-    List<SuitCaseResult> selectList(SuitCaseResult suitCaseResult);
-    List<SuitCaseResult> selectBySuitIdbuildIdSuitCaseId(Integer suitcaseid, Integer suitid, Integer buildid);
-    SuitCaseResult selectBySuitIdAndbuild(@Param("suitcaseid")Integer suitcaseid, @Param("buildid") Integer buildid);
 
+    List<SuitCaseResult> selectList(SuitCaseResult suitCaseResult);
+
+    List<SuitCaseResult> selectBySuitIdbuildIdSuitCaseId(Integer suitcaseid, Integer suitid, Integer buildid);
+
+    SuitCaseResult selectBySuitIdAndbuild(@Param("suitcaseid") Integer suitcaseid, @Param("buildid") Integer buildid);
+
+    List<SuitCaseResult> selectByType(@Param("suitcaseid") Integer suitcaseid, @Param("buildid")Integer buildid, @Param("casetype") String casetype);
 
 }

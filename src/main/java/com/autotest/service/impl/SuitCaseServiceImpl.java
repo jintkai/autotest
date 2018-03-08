@@ -130,14 +130,14 @@ public class SuitCaseServiceImpl implements SuitCaseService {
      * @param httpInfo info中记录了case的运行结果。
      * @return 用于存储断言的验证结果;
      */
-    private  List<AssertExpModal> resoleveAssertExp(AssertModel expAssert, SuitCase suitCase, HttpInfo httpInfo) {
+    private List<AssertExpModal> resoleveAssertExp(AssertModel expAssert, SuitCase suitCase, HttpInfo httpInfo) {
         expAssert.setAssertType("assert");
         expAssert.setSuccess(1);
         List<AssertExpModal> assertExpModals = new ArrayList<>();
         String assertExpStr = suitCase.getAssertexp();
-        List<Map<String, Object>> assertMapList = (List<Map<String, Object>>) JSONArray.parse(assertExpStr.equals("")?"[]":assertExpStr);
-        for(int i =0;i<assertMapList.size();i++){
-            Map<String, Object> assertMap=assertMapList.get(i);
+        List<Map<String, Object>> assertMapList = (List<Map<String, Object>>) JSONArray.parse(assertExpStr.equals("") ? "[]" : assertExpStr);
+        for (int i = 0; i < assertMapList.size(); i++) {
+            Map<String, Object> assertMap = assertMapList.get(i);
             assertExpModals.add(
                     new AssertExpModal((Integer) assertMap.get("id"), (String) assertMap.get("aType"),
                             (String) assertMap.get("variable"), (boolean) assertMap.get("negation"),
@@ -153,16 +153,27 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             if (type.equals("code")) {
                 switch (assertExpModal.getRule()) {
                     case "equal":
-                        if (assertExpModal.getValue().equals(httpInfo.getResponseCode())) {
+                        if (Integer.valueOf(assertExpModal.getValue()) == Integer.valueOf(httpInfo.getResponseCode())) {
                             result = true;
                         }
                         break;
                     case "unequal":
-                        if (!assertExpModal.getValue().equals(httpInfo.getResponseCode())) {
+                        if (Integer.valueOf(assertExpModal.getValue()) != Integer.valueOf(httpInfo.getResponseCode())) {
+                            result = true;
+                        }
+                        break;
+                    case "less":
+                        if (Integer.valueOf(assertExpModal.getValue()) > Integer.valueOf(httpInfo.getResponseCode())) {
+                            result = true;
+                        }
+                        break;
+                    case "greater":
+                        if (Integer.valueOf(assertExpModal.getValue()) < Integer.valueOf(httpInfo.getResponseCode())) {
                             result = true;
                         }
                         break;
                     default:
+                        result = true;
                         break;
                 }
                 singleResult.put("message", httpInfo.getResponseCode());
@@ -194,11 +205,11 @@ public class SuitCaseServiceImpl implements SuitCaseService {
                     default:
                         break;
                 }
-                singleResult.put("message",httpInfo.getResponseTime());
+                singleResult.put("message", httpInfo.getResponseTime());
                 if (assertExpModal.isNegation()) {
                     result = !result;
                 }
-            }else if( type.equals("responseBody")){
+            } else if (type.equals("responseBody")) {
                 switch (assertExpModal.getRule()) {
                     case "equal":
                         if (assertExpModal.getValue().equals(httpInfo.getResponseBody())) {
@@ -250,6 +261,8 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             suitCaseResult.setRequestUrl(urlRequest.getMsg());
             suitCaseResult.setRequestBody(bodyRequest.getMsg());
             suitCaseResult.setStatus(3);
+            suitCaseResult.setCasetype(suitCase.getCaseType());
+            suitCaseResult.setMaincase(suitCase.getMainCase());
             updateResult(suitCaseResult);
             return suitCaseResult;
         }
@@ -300,6 +313,8 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             List<SuitCaseResult> lists = suitCaseResultService.selectList(suitCaseResult);
             suitCaseResult.setSuitid(suitCase.getSuitid());
             suitCaseResult.setStatus(0);
+            suitCaseResult.setCasetype(suitCase.getCaseType());
+            suitCaseResult.setMaincase(suitCase.getMainCase());
             if (lists.size() == 1) {
                 suitCaseResult.setId(lists.get(0).getId());
                 suitCaseResultService.updateSuitResult(suitCaseResult);
@@ -324,8 +339,8 @@ public class SuitCaseServiceImpl implements SuitCaseService {
             /**
              * 断言逻辑，断言解析，断言判断
              */
-            AssertModel expAssert =new AssertModel() ;
-            assertExpModals = resoleveAssertExp(expAssert,suitCase, httpInfo);
+            AssertModel expAssert = new AssertModel();
+            assertExpModals = resoleveAssertExp(expAssert, suitCase, httpInfo);
             assertModels.add(expAssert);
 
         } else {
@@ -361,9 +376,11 @@ public class SuitCaseServiceImpl implements SuitCaseService {
         suitCaseResult.setAssertlog(jsonStr);
         suitCaseResult.setResponsetime(Integer.valueOf(String.valueOf(httpInfo.getResponseTime())));
         suitCaseResult.setStatus(httpInfo.getIsSuccess());
-        if(assertExpModals.isEmpty()){
+        suitCaseResult.setCasetype(suitCase.getCaseType());
+        suitCaseResult.setMaincase(suitCase.getMainCase());
+        if (assertExpModals.isEmpty()) {
             suitCaseResult.setAssertExp("[]");
-        }else{
+        } else {
             suitCaseResult.setAssertExp(JSON.toJSONString(assertExpModals));
         }
         updateResult(suitCaseResult);

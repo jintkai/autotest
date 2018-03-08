@@ -18,10 +18,12 @@
         <result column="requestBody" property="requestBody" jdbcType="VARCHAR"/>
         <result column="requestUrl" property="requestUrl" jdbcType="VARCHAR"/>
         <result column="assertExp" property="assertExp" jdbcType="VARCHAR"/>
+        <result column="casetype" property="casetype" jdbcType="VARCHAR"/>
+        <result column="maincase" property="maincase" jdbcType="INTEGER"/>
     </resultMap>
     <sql id="Base_Column_List">
         id, suitcaseid, suitid, buildid, responseHeader, responseBody, responseCode, responseTime,
-        assertLog, status, _timestamp, updatetime,requestUrl,requestHeader,requestBody,assertExp
+        assertLog, status, _timestamp, updatetime,requestUrl,requestHeader,requestBody,assertExp,casetype,maincase
     </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
@@ -82,13 +84,14 @@
         insert into qa_suitcase_result (id, suitcaseid, suitid,
         buildid, responseHeader, responseBody,
         responseCode, responseTime, assertLog,
-        status, _timestamp, updatetime,requestHeader,requestUrl,requestBody,assertExp
+        status, _timestamp, updatetime,requestHeader,requestUrl,requestBody,assertExp,casetype,maincase
         )
         values (#{id,jdbcType=INTEGER}, #{suitcaseid,jdbcType=INTEGER}, #{suitid,jdbcType=INTEGER},
         #{buildid,jdbcType=INTEGER}, #{responseheader,jdbcType=VARCHAR}, #{responsebody,jdbcType=VARCHAR},
         #{responsecode,jdbcType=VARCHAR}, #{responsetime,jdbcType=INTEGER}, #{assertlog,jdbcType=VARCHAR},
         #{status,jdbcType=INTEGER}, now(), #{updatetime,jdbcType=TIMESTAMP},#{requestHeader,jdbcType=VARCHAR},
-        #{requestUrl,jdbcType=VARCHAR},#{requestBody,jdbcType=VARCHAR},#{assertExp,jdbcType=VARCHAR}
+        #{requestUrl,jdbcType=VARCHAR},#{requestBody,jdbcType=VARCHAR},
+        #{assertExp,jdbcType=VARCHAR},#{casetype,jdbcType=VARCHAR},#{maincase,jdbcType=INTEGER}
         )
     </insert>
     <insert id="insertSelective" parameterType="com.autotest.model.SuitCaseResult">
@@ -142,6 +145,12 @@
             <if test="assertExp !=null">
                 assertExp,
             </if>
+            <if test="casetype !=null">
+                casetype,
+            </if>
+            <if test="maincase !=null">
+                maincase,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -192,6 +201,12 @@
             <if test="assertExp != null">
                 #{assertExp,jdbcType=VARCHAR}
             </if>
+            <if test="casetype != null">
+                #{casetype,jdbcType=VARCHAR}
+            </if>
+            <if test="maincase != null">
+                #{maincase,jdbcType=INTEGER}
+            </if>
         </trim>
         <selectKey resultType="java.lang.Integer" keyProperty="id">
             SELECT LAST_INSERT_ID()
@@ -239,6 +254,12 @@
             <if test="assertExp !=null">
                 assertExp=#{assertExp,jdbcType=VARCHAR},
             </if>
+            <if test="casetype !=null">
+                casetype=#{casetype,jdbcType=VARCHAR},
+            </if>
+            <if test="maincase !=null">
+                maincase=#{maincase,jdbcType=INTEGER},
+            </if>
             updatetime = now(),
         </set>
         where id = #{id,jdbcType=INTEGER}
@@ -256,11 +277,28 @@
         status = #{status,jdbcType=INTEGER},
         _timestamp = #{timestamp,jdbcType=TIMESTAMP},
         assertExp=#{assertExp,jdbcType=VARCHAR},
+        casetype=#{casetype,jdbcType=VARCHAR},
+         maincase=#{maincase,jdbcType=INTEGER},
         updatetime = #{updatetime,jdbcType=TIMESTAMP}
         where id = #{id,jdbcType=INTEGER}
     </update>
 
     <select id="countCase" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         select count(1) from qa_suitcase
+    </select>
+
+    <select id="selectByType" resultType="com.autotest.model.SuitCaseResult" parameterType="java.util.Map">
+        select t1.*,t2.casename
+        from qa_suitcase_result t1 left join qa_suitcase t2 on t1.suitcaseid=t2.id
+        where 1=1
+        <if test="casetype != null">
+            and t1.casetype = #{casetype,jdbcType=VARCHAR}
+        </if>
+        <if test="buildid !=null">
+            and t1.buildid = #{buildid,jdbcType=INTEGER}
+        </if>
+        <if test="suitcaseid !=null">
+            and t1.maincase = #{suitcaseid,jdbcType=INTEGER}
+        </if>
     </select>
 </mapper>

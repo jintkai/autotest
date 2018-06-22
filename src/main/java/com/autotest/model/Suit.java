@@ -1,5 +1,6 @@
 package com.autotest.model;
 
+import java.sql.Time;
 import java.util.Date;
 
 public class Suit {
@@ -13,6 +14,25 @@ public class Suit {
 
     private Date timestamp;
 
+    private boolean email;
+
+    private Time cycletime;
+
+    public boolean isEmail() {
+        return email;
+    }
+
+    public void setEmail(boolean email) {
+        this.email = email;
+    }
+
+    public Time getCycletime() {
+        return cycletime;
+    }
+
+    public void setCycletime(Time time) {
+        this.cycletime = time;
+    }
     public Integer getSuitid() {
         return suitid;
     }

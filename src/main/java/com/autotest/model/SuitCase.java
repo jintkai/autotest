@@ -1,5 +1,6 @@
 package com.autotest.model;
 
+import java.sql.Time;
 import java.util.Date;
 
 public class SuitCase {
@@ -32,6 +33,12 @@ public class SuitCase {
     private Date timestamp;
 
     private Date updatetime;
+
+    private String caseType;
+
+    private Integer mainCase;
+
+
 
     public Integer getId() {
         return id;
@@ -151,5 +158,21 @@ public class SuitCase {
 
     public void setUpdatetime(Date updatetime) {
         this.updatetime = updatetime;
+    }
+
+    public String getCaseType() {
+        return caseType;
+    }
+
+    public void setCaseType(String caseType) {
+        this.caseType = caseType;
+    }
+
+    public Integer getMainCase() {
+        return mainCase;
+    }
+
+    public void setMainCase(Integer mainCase) {
+        this.mainCase = mainCase;
     }
 }

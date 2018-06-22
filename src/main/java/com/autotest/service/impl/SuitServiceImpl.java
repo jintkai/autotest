@@ -56,4 +56,9 @@ public class SuitServiceImpl implements SuitService{
         return suitMapper.selectByName(suitname);
     }
 
+    @Override
+    public int countSuitByCreateTime(Long time) {
+        return suitMapper.countSuit(time);
+    }
+
 }

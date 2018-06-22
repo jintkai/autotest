@@ -3,7 +3,7 @@ package com.autotest.model;
 public class AssertModel {
     private String assertType;
     private Integer success;
-    private String message;
+    private Object message;
 
     public String getAssertType() {
         return assertType;
@@ -21,11 +21,11 @@ public class AssertModel {
         this.success = success;
     }
 
-    public String getMessage() {
+    public Object getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(Object message) {
         this.message = message;
     }
 }

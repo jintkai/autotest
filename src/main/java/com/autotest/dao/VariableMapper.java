@@ -14,6 +14,6 @@ public interface VariableMapper {
 
     List<Variable> selectBySuitid(Integer suitid);
     List<Variable> selectBySuitCaseId(Integer suitcaseId);
-
+    int insertVariable(Variable variable);
 }
 

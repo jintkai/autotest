@@ -17,4 +17,5 @@ public interface CaseMapper {
     int updateByPrimaryKeySelective(Case record);
 
     List<Case> selectByCaseName(String casename);
+    int countCase(Integer i);
 }

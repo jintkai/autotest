@@ -18,4 +18,6 @@ public interface SuitService {
     int updateSuit(Suit record);
 
     List<Suit> selectSuitByName(String suitname);
+
+    int countSuitByCreateTime(Long time);
 }

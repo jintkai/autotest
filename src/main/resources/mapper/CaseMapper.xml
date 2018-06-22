@@ -33,6 +33,10 @@
     where casename = #{casename,jdbcType=VARCHAR}
   </select>
 
+  <select id="countCase" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select count(1) from qa_case
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from qa_case
     where caseid = #{caseid,jdbcType=INTEGER}

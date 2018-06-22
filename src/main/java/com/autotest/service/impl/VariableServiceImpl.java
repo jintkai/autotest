@@ -129,6 +129,12 @@ public class VariableServiceImpl {
     }
 
 
+    public void insertVariable(Variable variable){
+    }
+
+    public void insertVariableList(List<Variable> variable){
+
+    }
 
 
 }

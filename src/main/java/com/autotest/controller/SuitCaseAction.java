@@ -251,6 +251,10 @@ public class SuitCaseAction {
         return baseResp;
     }
 
+    public BaseResp insertSuitCase(SuitCase record,String variable){
+        BaseResp baseResp = new BaseResp();
+        return baseResp;
+    }
 
     @RequestMapping("/selectBySuitIdCaseId")
     List<SuitCase> selectBySuitIdCaseId(Integer suitid, Integer caseid) {

@@ -15,7 +15,13 @@
   <sql id="Base_Column_List" >
     variableid, type, suitid, suitcaseId,name ,varExpress, sequence,updatetime, _timestamp
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    <insert id="insertVariable" parameterType="com.autotest.model.Variable">
+      insert into qa_variable (type,suitcaseid,suitid,name,varExpress,sequence,updatetime)
+      values(#{type,jdbcType=VARCHAR},#{suitid,jdbcType=INTEGER},#{suitcaseid,jdbcType=INTEGER},#{name,jdbcType=VARCHAR},
+      #{varExpress,jdbcType=VARCHAR},#{sequence,jdbcType=INTEGER},now())
+
+    </insert>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from qa_variable
